@@ -218,6 +218,10 @@ body {
   .landing-about-text {
     font-size: 14pt;
     gap: 1.5rem;
-    text-align: center;
+    text-align: left;
+  }
+
+  .landing-about-img-wrap {
+    margin-bottom: 1.5rem;
   }
 }
