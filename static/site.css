@@ -167,7 +167,7 @@ body {
 @media (max-width: 700px) {
 
   .site-nav {
-    padding: 1.5rem 1.5rem 1.25rem;
+    padding: 1.5rem 1rem 1rem 1rem;
   }
 
   .site-nav ul {
