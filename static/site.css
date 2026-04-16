@@ -24,7 +24,7 @@ body {
 .site-nav {
   display: flex;
   justify-content: center;
-  padding: 3rem 3rem 1.25rem;
+  padding: 5rem 3rem 2rem;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -34,7 +34,7 @@ body {
   display: flex;
   list-style: none;
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   justify-content: space-between;
 }
 
