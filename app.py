@@ -19,31 +19,19 @@ def landing():
     return render_template("landing.html")
 
 
-_COMING_SOON = """<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>BahayCubo — Coming Soon</title>
-</head>
-<body>
-  <p>Coming soon.</p>
-</body>
-</html>"""
-
-
 @app.route("/webapps")
 def webapps():
-    return _COMING_SOON
+    return render_template("webapps.html")
 
 
 @app.route("/aboutme")
 def aboutme():
-    return _COMING_SOON
+    return render_template("aboutme.html")
 
 
 @app.route("/contact")
 def contact():
-    return _COMING_SOON
+    return render_template("contact.html")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,60 @@
+/* ── Google Font ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+/* ── Reset / base ────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: 'Alegreya Sans', sans-serif;
+  /* #EDA52B at 10% opacity as a page background tint */
+  background-color: rgba(237, 165, 43, 0.10);
+  color: #1a1a1a;
+  min-height: 100vh;
+}
+
+/* ── Navigation ──────────────────────────────────────────────────────────── */
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  padding: 1.25rem 3rem;
+  background-color: rgba(237, 165, 43, 0.15);
+  border-bottom: 2px solid rgba(237, 165, 43, 0.35);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.site-nav a {
+  font-size: 36pt;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.site-nav a:hover {
+  color: #c47d00;
+}
+
+.site-nav a.active {
+  color: #c47d00;
+  border-bottom: 3px solid #c47d00;
+  padding-bottom: 2px;
+}
+
+/* ── Page content wrapper ────────────────────────────────────────────────── */
+.page-content {
+  padding: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}

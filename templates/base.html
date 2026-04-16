@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}BahayCubo{% endblock %}</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}" />
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a href="{{ url_for('landing') }}"   class="{{ 'active' if active_page == 'home'    }}">Bahay Cubo</a>
+    <a href="{{ url_for('webapps') }}"   class="{{ 'active' if active_page == 'webapps' }}">Webapps</a>
+    <a href="{{ url_for('aboutme') }}"   class="{{ 'active' if active_page == 'aboutme' }}">About me</a>
+    <a href="{{ url_for('contact') }}"   class="{{ 'active' if active_page == 'contact' }}">Contact me</a>
+  </nav>
+
+  <main class="page-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}{% endblock %}
+
+</body>
+</html>
