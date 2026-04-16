@@ -68,7 +68,9 @@
   <header class="app-header">
     <div class="app-brand" aria-label="Bahay Cubo">
       <div class="app-brand-mark">
-        <img class="app-brand-logo" src="{{ url_for('static', filename='favicon.svg') }}?v={{ static_v.favicon }}" width="44" height="44" alt="" />
+        <a href="/" aria-label="Back to BahayCubo home">
+          <img class="app-brand-logo" src="{{ url_for('static', filename='favicon.svg') }}?v={{ static_v.favicon }}" width="44" height="44" alt="" />
+        </a>
       </div>
     </div>
     <div id="error-toast" class="error-toast hidden" role="alert"></div>

@@ -208,7 +208,13 @@ body {
   background: none;
   overflow: visible !important;      /* explicitly prevent cropping */
   clip-path: none !important;        /* disable any accidental clipping/cropping */
+  transition: transform 0.3s ease, opacity 0.3s ease;
   /* Remove overflow cropping, ensure full logo shows even if SVG or PNG is not circle-shaped */
+}
+
+.app-brand-mark a:hover .app-brand-logo {
+  transform: rotate(20deg) scale(1.15);
+  opacity: 0.85;
 }
 
 /* ─── Error toast (in header: right on desktop, below brand on mobile) ─ */
