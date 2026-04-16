@@ -1,0 +1,6 @@
+*.bin
+apps/CuboCross/tables/
+venv/
+__pycache__/
+*.pyc
+.DS_Store

@@ -1,0 +1,1424 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ─── Design tokens ──────────────────────────────────────────── */
+:root {
+  --bg:          #0d0d12;
+  --surface:     #15151c;
+  --surface-2:   #1c1c26;
+  --surface-3:   #24242f;
+  --border:      rgba(255,255,255,0.07);
+  --border-hi:   rgba(255,255,255,0.14);
+  --accent:      #6b7aff;
+  --accent-dim:  rgba(107,122,255,0.18);
+  --accent-hi:   rgba(107,122,255,0.35);
+  --accent-hover:#8b96ff;
+  --text:        #e4e4f0;
+  --text-muted:  #7a7a92;
+  --text-dim:    #48485c;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   18px;
+  --shadow:      0 4px 24px rgba(0,0,0,0.45);
+  --cube-size:   190px;
+  --cube-half:   95px;
+  /* Hint “mirror” stickers (3D): set on .sticker children — parent opacity is unreliable in WebKit */
+  --cube-hint-opacity: 0.10;
+  --transition:  350ms cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ─── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  overflow-x: hidden;
+  max-width: 100%;
+  /* Native date/time pickers follow this in Chromium & WebKit */
+  color-scheme: dark;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+@media (min-width: 900px) {
+  body { min-height: 100vh; }
+}
+
+/* Desktop only: lock to viewport so the history list scrolls in place */
+@media (min-width: 900px) {
+  html, body { height: 100%; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOADING SCREEN
+   ═══════════════════════════════════════════════════════════════ */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  z-index: 100;
+  transition: opacity 0.5s ease;
+}
+.loading-screen.fade-out { opacity: 0; pointer-events: none; }
+
+.loading-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.loading-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 0.2px;
+  min-height: 1.2em;
+}
+
+.loading-cards {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  margin-top: 0.5rem;
+}
+
+/* ─── Individual loading card ────────────────────────────────── */
+.lcard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.25rem 1.1rem;
+  width: 130px;
+  transition: border-color 0.4s, box-shadow 0.4s;
+}
+.lcard.done {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-dim), 0 0 20px rgba(107,122,255,0.15);
+}
+
+.lcard-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.lcard-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.lcard-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.lcard-status {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-weight: 500;
+  transition: color 0.3s;
+}
+.lcard.done .lcard-status { color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════════════════
+   APP SHELL
+   ═══════════════════════════════════════════════════════════════ */
+.app-wrap {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.1rem 0.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Desktop: lock to viewport height so the history list scrolls in place */
+@media (min-width: 900px) {
+  .app-wrap {
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.fade-in { animation: fadeIn 0.5s ease forwards; }
+
+/* ─── App header (logo in #f4ede0 circle — Cubo Cross on loading/title) ─ */
+.app-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.45rem;
+  flex-shrink: 0;
+  min-height: 0;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-brand-mark {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #f4ede0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  /* Remove overflow property entirely to prevent inside cropping issues */
+}
+
+.app-brand-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+  background: none;
+  overflow: visible !important;      /* explicitly prevent cropping */
+  clip-path: none !important;        /* disable any accidental clipping/cropping */
+  /* Remove overflow cropping, ensure full logo shows even if SVG or PNG is not circle-shaped */
+}
+
+/* ─── Error toast (in header: right on desktop, below brand on mobile) ─ */
+.error-toast {
+  background: rgba(220,50,50,0.15);
+  border: 1px solid rgba(220,50,50,0.35);
+  color: #fca5a5;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-md);
+  font-size: 0.83rem;
+  box-sizing: border-box;
+}
+
+.app-header .error-toast {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  max-width: min(340px, calc(100% - 5rem));
+}
+
+/* ─── Generic card ───────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.card-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.45rem;
+}
+
+/* ─── Main layout ────────────────────────────────────────────── */
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr;   /* single column by default; desktop overrides below */
+  gap: 1rem;
+  align-items: stretch;
+  min-width: 0;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .main-layout {
+    grid-template-columns: 1fr 260px;
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+/* ─── Left+Center block ──────────────────────────────────────── */
+.lc-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .lc-block {
+    min-height: 0;
+    overflow: hidden;
+    height: 100%;
+  }
+}
+
+/* ─── Top row: left panel + cube ─────────────────────────────── */
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr;   /* single column by default; desktop overrides below */
+  gap: 1rem;
+  align-items: stretch;
+  min-width: 0;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .top-row {
+    grid-template-columns: 260px 1fr;
+    flex-shrink: 1;
+    min-height: 0;
+  }
+}
+
+/* ─── Left panel ─────────────────────────────────────────────── */
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  min-width: 0;
+  width: 100%;
+}
+
+.lp-row { padding: 0.9rem 1rem; }
+.lp-row + .lp-row { border-top: 1px solid var(--border); }
+
+.lp-row-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.1rem 1rem;
+}
+
+/* Scramble row: fixed height so it never shifts when text appears.
+   Sized to hold ~4 lines of move text comfortably. */
+.lp-row-scramble {
+  height: 7.5rem;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.9rem 1rem;
+}
+
+.lp-row-scramble .card-label {
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+}
+
+.lp-row-scramble .scramble-text-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.scramble-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  word-break: break-word;
+  color: var(--text);
+}
+
+.lp-row-viz { flex-shrink: 0; }
+
+/* ─── Scramble button ────────────────────────────────────────── */
+.scramble-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.scramble-btn:hover .sbtn-scene { transform: scale(1.12); }
+.scramble-btn:active .sbtn-scene { transform: scale(0.9); }
+.scramble-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.scramble-btn:disabled .sbtn-scene { transform: none !important; }
+
+/* ─── Sticker-grid 3D cube (scramble button) ─────────────────── */
+/* Cube is 60px × 60px; half = 30px for translateZ */
+.sbtn-scene {
+  width: 60px;
+  height: 60px;
+  perspective: 220px;
+  perspective-origin: 50% 50%;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.sbtn-cube {
+  width: 60px;
+  height: 60px;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.sbtn-face {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: #111118;
+  border-radius: 6px;
+  box-sizing: border-box;
+  padding: 3px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.sbtn-sticker {
+  border-radius: 2px;
+  background: #333;
+}
+
+.sbtn-f { transform: translateZ(30px); }
+.sbtn-b { transform: rotateY(180deg) translateZ(30px); }
+.sbtn-r { transform: rotateY( 90deg) translateZ(30px); }
+.sbtn-l { transform: rotateY(-90deg) translateZ(30px); }
+.sbtn-u { transform: rotateX( 90deg) translateZ(30px); }
+.sbtn-d { transform: rotateX(-90deg) translateZ(30px); }
+
+/* ─── Viz picker ─────────────────────────────────────────────── */
+.viz-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.viz-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 9px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  text-align: left;
+}
+.viz-btn:hover { background: var(--surface-2); border-color: var(--border-hi); color: var(--text); }
+.viz-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
+
+.viz-dot { width: 11px; height: 11px; border-radius: 2px; flex-shrink: 0; }
+.viz-dot-cross { background: #e8e8f0; }
+.viz-slot { font-size: 0.9rem; font-weight: 600; letter-spacing: 0.2px; margin-left: 2px; color: inherit; }
+
+/* ─── Per-face move colors ───────────────────────────────────── */
+.mv-W { color: #e8e8f0; }
+.mv-Y { color: #f5c842; }
+.mv-G { color: #4ade80; }
+.mv-B { color: #60a5fa; }
+.mv-R { color: #f87171; }
+.mv-O { color: #fb923c; }
+.mv-rot { color: #a78bfa; }
+
+/* ─── Cube card ──────────────────────────────────────────────── */
+.cube-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+}
+
+@media (min-width: 900px) {
+  .cube-card {
+    padding: 2.5rem 1rem 2.5rem 18rem;
+    overflow: hidden;
+  }
+}
+
+.cube-region {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+@media (min-width: 900px) {
+  .cube-region { gap: 10rem; }
+}
+
+/* Vertical stack: z-ccw / dpad / z-cw */
+.ctrl-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* ─── 3D cube scene ──────────────────────────────────────────── */
+.cube-scene {
+  width: var(--cube-size);
+  height: var(--cube-size);
+  perspective: 640px;
+  perspective-origin: 50% 38%;
+  transform: translateY(-20px);
+  flex-shrink: 0;
+}
+
+.cube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  /* Initial transform set by JS via applyCubeTransform() on load */
+  /* transform animated via JS slerp — no CSS transition */
+}
+
+.face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 4px;
+  padding: 5px;
+  background: #050508;
+  border-radius: 5px;
+  backface-visibility: visible;
+}
+
+.face-f { transform: translateZ(var(--cube-half)); }
+.face-b { transform: rotateY(180deg)  translateZ(var(--cube-half)); }
+.face-r { transform: rotateY(90deg)   translateZ(var(--cube-half)); }
+.face-l { transform: rotateY(-90deg)  translateZ(var(--cube-half)); }
+.face-u { transform: rotateX(90deg)   translateZ(var(--cube-half)); }
+.face-d { transform: rotateX(-90deg)  translateZ(var(--cube-half)); }
+
+/* Hint faces: same position as opposite face, rotated 180° on Y to face inward.
+   Placed at 4× the cube half-size behind, semi-transparent. */
+/* ─── Controls hint panel ────────────────────────────────────── */
+.ctrl-hint {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  z-index: 10;
+}
+
+.ctrl-hint-toggle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.ctrl-hint-toggle:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.ctrl-hint-body {
+  background: rgba(20, 20, 30, 0.82);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+  max-height: 200px;
+  opacity: 1;
+  transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.2s ease;
+}
+.ctrl-hint.collapsed .ctrl-hint-body {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.ctrl-hint-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.ctrl-hint-row span {
+  color: var(--text-dim);
+}
+
+kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: rgba(255,255,255,0.06);
+  font-family: inherit;
+  font-size: 0.7rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ─── Hint faces ─────────────────────────────────────────────── */
+.hint-face {
+  background: transparent;
+  pointer-events: none;
+}
+
+.hint-face .sticker {
+  opacity: var(--cube-hint-opacity);
+}
+
+.hint-f { transform: scaleX(-1) rotateY(180deg) translateZ(calc(var(--cube-half) * -2)); }
+.hint-b { transform: scaleX(-1) rotateY(0deg) translateZ(calc(var(--cube-half) * -2)); }
+.hint-r { transform: scaleX(-1) rotateY(90deg) translateZ(calc(var(--cube-half) * -2)); }
+.hint-l { transform: scaleX(-1) rotateY(-90deg) translateZ(calc(var(--cube-half) * -2)); }
+.hint-u { transform: scaleY(-1) rotateX(90deg) translateZ(calc(var(--cube-half) * -2)); }
+.hint-d { transform: rotateX(-90deg) translateZ(calc(var(--cube-half) * 2)); }
+
+.sticker { border-radius: 3px; transition: background 0.25s; }
+.sticker.hi { box-shadow: inset 0 1px 0 rgba(255,255,255,0.22); }
+
+/* ─── Z-rotation buttons ─────────────────────────────────────── */
+.z-btn {
+  width: 42px; height: 42px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-hi);
+  color: var(--text-muted);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+  flex-shrink: 0;
+}
+.z-btn:hover { background: var(--surface-3); color: var(--text); }
+
+/* ─── D-pad ──────────────────────────────────────────────────── */
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 38px);
+  grid-template-rows: repeat(3, 38px);
+  gap: 4px;
+}
+
+.dpad-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border-hi);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s, transform 0.1s;
+}
+.dpad-btn:hover  { background: var(--surface-3); color: var(--text); }
+.dpad-btn:active { transform: scale(0.92); }
+
+.dpad-reset { font-size: 0.95rem; color: var(--accent); border-color: var(--accent-dim); }
+.dpad-reset:hover { border-color: var(--accent); background: var(--accent-dim); color: var(--accent-hover); }
+
+/* ─── Solution row (5 boxes) ─────────────────────────────────── */
+.sol-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+  align-items: stretch;
+  min-width: 0;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .sol-row {
+    flex: 1;        /* grow to fill remaining lc-block height on desktop */
+    min-height: 0;
+  }
+}
+
+.sol-box {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 1.1rem 0.85rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;  /* spread icon/label/htm/button evenly */
+  gap: 0.5rem;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.sol-box:hover { border-color: var(--border-hi); }
+.sol-box.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-dim), var(--shadow);
+}
+
+.sol-icon { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.sol-dot-lg { width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0; }
+.sol-dot-cross-lg { background: #e8e8f0; }
+
+.sol-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.sol-htm {
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: -2px;
+  color: var(--text);
+  line-height: 1;
+}
+
+/* Fixed-height reveal area: tall enough for 2 lines, content centered */
+.reveal-btn {
+  width: 100%;
+  /* fixed height: roomy enough for 2 lines with breathing room */
+  height: calc(2 * 0.88rem * 1.55 + 2 * 1.1rem);
+  padding: 0.45rem 0.6rem;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border-hi);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  text-align: center;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.reveal-btn:hover:not(:disabled):not(.revealed) {
+  background: var(--surface-3);
+  border-color: var(--accent);
+  color: var(--text);
+}
+.reveal-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.reveal-btn.revealed {
+  cursor: default;
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text);
+  text-align: left;
+  align-items: center;   /* vertically center within the fixed height */
+  justify-content: flex-start;
+  white-space: normal;
+}
+
+.sol-moves-inline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  white-space: normal;
+  word-break: break-word;
+  animation: fadeIn 0.2s ease;
+}
+
+
+/* ─── Right column: History ──────────────────────────────────── */
+.right-col {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 900px) {
+  .right-col {
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+.history-panel {
+  padding: 0.9rem 0.9rem 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  flex: 1;
+}
+
+@media (min-width: 900px) {
+  .history-panel {
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.history-header .card-label { margin-bottom: 0; }
+
+.date-nav { display: flex; align-items: center; gap: 2px; }
+
+.date-nav-btn {
+  width: 24px; height: 24px;
+  background: none;
+  border: 1px solid var(--border-hi);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s;
+}
+.date-nav-btn:hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
+.date-nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+.date-display {
+  background: none;
+  border: 1px solid var(--border-hi);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.18rem 0.5rem;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+.date-display:hover { background: var(--surface-2); color: var(--text); }
+
+/* Kept for sync / fallback; calendar UI uses <dialog> instead of native picker */
+.date-picker-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+/* ─── Custom date picker (replaces native popover) ───────────── */
+.date-dialog {
+  position: fixed;
+  margin: 0;
+  inset: auto;
+  right: auto;
+  bottom: auto;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow), 0 0 0 1px var(--border);
+  max-width: calc(100vw - 1.5rem);
+  width: max-content;
+}
+
+.date-dialog::backdrop {
+  background: rgba(5, 5, 12, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.date-dialog-inner {
+  padding: 1rem 1.1rem 1.05rem;
+  min-width: min(300px, calc(100vw - 2rem));
+}
+
+.date-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: -0.15rem -0.25rem 0.65rem;
+  padding: 0.2rem 0.25rem;
+  border-radius: var(--radius-sm);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.date-dialog-head:active {
+  cursor: grabbing;
+}
+
+.date-dialog-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  flex: 1;
+  text-align: center;
+  cursor: grab;
+}
+
+.date-dialog-nav {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.date-dialog-nav:hover:not(:disabled) {
+  background: var(--surface-3);
+  color: var(--text);
+  border-color: var(--border-hi);
+}
+
+.date-dialog-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.date-dialog-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.date-dialog-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.date-dialog-pad {
+  min-height: 2.35rem;
+}
+
+.date-dialog-cell {
+  min-height: 2.35rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+
+.date-dialog-cell:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+.date-dialog-cell--selected {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.date-dialog-cell:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+.date-dialog-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.date-dialog-btn {
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-hi);
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s, filter 0.12s;
+}
+
+.date-dialog-btn:hover {
+  filter: brightness(1.08);
+}
+
+.date-dialog-btn--ghost {
+  background: var(--surface-2);
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+.date-dialog-btn--ghost:hover {
+  background: var(--surface-3);
+  color: var(--text);
+  filter: none;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding-right: 3px;
+}
+
+@media (min-width: 900px) {
+  .history-list {
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-3) transparent;
+  }
+}
+
+.history-empty {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.history-entry {
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.7rem;
+  transition: border-color 0.12s, box-shadow 0.12s;
+  cursor: pointer;
+}
+.history-entry:hover { border-color: var(--border-hi); }
+.history-entry.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-dim);
+}
+
+.hist-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.hist-time { font-size: 0.68rem; color: var(--text-dim); font-weight: 500; }
+
+.hist-del {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 2px;
+  border-radius: 3px;
+  transition: color 0.12s, background 0.12s;
+}
+.hist-del:hover { color: #f87171; background: rgba(248,113,113,0.1); }
+
+.hist-cells {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.hcell {
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 3px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.hcell-dots { display: flex; gap: 2px; align-items: center; height: 12px; }
+.hdot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.hdot-cross { background: #e8e8f0; }
+
+.hcell-htm {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+/* ─── Utility ────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ─── Responsive (tablet / small desktop) ────────────────────── */
+@media (max-width: 960px) {
+  .loading-cards { flex-wrap: wrap; justify-content: center; }
+}
+/* History fixed height only when the shell itself is fixed-height (desktop) */
+@media (min-width: 900px) and (max-width: 960px) {
+  .history-panel { height: 300px; flex: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE / TABLET  (≤ 899 px — covers iPhone portrait + landscape)
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 899px) {
+
+  /* ── Shell ── */
+  .app-wrap {
+    padding: 0.75rem 0.6rem 2rem;
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .app-header .error-toast {
+    position: static;
+    transform: none;
+    max-width: none;
+    width: 100%;
+  }
+
+  /* ── Force all major containers to stay within viewport ── */
+  .lc-block, .top-row, .sol-row, .left-panel, .cube-card {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ── Left panel layout on mobile:
+        Row 1: [scramble btn | scramble text]  — same horizontal row
+        Row 2: [viz picker — 2 wrapped lines, no scroll]   */
+  .left-panel {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* Row 1: button + scramble text side by side */
+  .lp-row-btn {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0.85rem;
+    flex: 0 0 auto;
+  }
+
+  .lp-row-scramble {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    min-height: 0;
+    flex: 1;
+    padding: 0.75rem 0.85rem;
+    border-left: 1px solid var(--border);
+  }
+
+
+  /* Use an inner wrapper trick: mark btn+scramble as a sub-row */
+  .left-panel {
+    flex-direction: column;
+  }
+
+  /* Row 1 sub-row: btn and scramble share a horizontal band */
+  .lp-row-btn + .lp-row-scramble {
+    border-top: none;
+  }
+
+  /* Wrap btn and scramble into a flex-row together */
+  .lp-row-btn { order: 1; }
+  .lp-row-scramble { order: 2; }
+  .lp-row-viz { order: 3; }
+
+  /* The trick: make the panel a 2-row grid where row1 = btn+scramble, row2 = viz */
+  .left-panel {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "btn  scramble"
+      "viz  viz";
+    width: 100%;
+  }
+
+  .lp-row-btn      { grid-area: btn;      padding: 0.75rem 0.85rem; }
+  .lp-row-scramble { grid-area: scramble; padding: 0.75rem 0.85rem; height: auto; min-height: 0; border-left: 1px solid var(--border); }
+  /* Taller viz band: more room for wrapped buttons + pushes cube/controls down the page */
+  .lp-row-viz {
+    grid-area: viz;
+    padding: 1rem 0.85rem 1.15rem;
+    border-top: 1px solid var(--border);
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 7.75rem;
+  }
+
+  /* Viz buttons: wrap to 2 lines, no scrolling needed */
+  .viz-picker {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+    overflow-x: visible;
+  }
+  .viz-btn { flex: 0 0 auto; font-size: 0.82rem; padding: 5px 8px; }
+
+  /* ── Cube card: shared mobile styles ── */
+  .cube-card {
+    padding: 1rem;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Shrink cube to 100px on all mobile */
+  .cube-scene {
+    width: 100px;
+    height: 100px;
+    perspective: 400px;
+    flex-shrink: 0;
+  }
+
+  /* Face translateZ = half of 100px = 50px */
+  .face-f { transform: translateZ(50px); }
+  .face-b { transform: rotateY(180deg)  translateZ(50px); }
+  .face-r { transform: rotateY(90deg)   translateZ(50px); }
+  .face-l { transform: rotateY(-90deg)  translateZ(50px); }
+  .face-u { transform: rotateX(90deg)   translateZ(50px); }
+  .face-d { transform: rotateX(-90deg)  translateZ(50px); }
+
+  /* Hint faces: ±2× half = ±100px */
+  .hint-f { transform: scaleX(-1) rotateY(180deg) translateZ(-100px); }
+  .hint-b { transform: scaleX(-1) rotateY(0deg)   translateZ(-100px); }
+  .hint-r { transform: scaleX(-1) rotateY(90deg)  translateZ(-100px); }
+  .hint-l { transform: scaleX(-1) rotateY(-90deg) translateZ(-100px); }
+  .hint-u { transform: scaleY(-1) rotateX(90deg)  translateZ(-100px); }
+  .hint-d { transform: rotateX(-90deg)             translateZ(100px); }
+
+  /* D-pad: slightly smaller cells */
+  .dpad {
+    grid-template-columns: repeat(3, 34px);
+    grid-template-rows: repeat(3, 34px);
+    gap: 3px;
+  }
+  .z-btn { width: 36px; height: 36px; font-size: 1rem; }
+
+  /* Controls hint: hide keyboard shortcuts on mobile (not relevant) */
+  .ctrl-hint { display: none; }
+
+  /* ── Solution row: 2-column grid on mobile ── */
+  .sol-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    flex: none;
+    height: auto;
+  }
+
+  /* Make the Cross box span full width */
+  .sol-box:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .sol-box {
+    padding: 0.85rem 0.7rem 0.75rem;
+  }
+
+  .sol-htm { font-size: 2.2rem; }
+
+  /* ── History panel: natural height, page scrolls ── */
+  .right-col { overflow: visible; }
+  .history-panel {
+    height: auto !important;
+    max-height: none;
+    flex: none;
+    overflow: visible;
+  }
+  .history-list {
+    overflow-y: visible;
+    max-height: none;
+  }
+
+  /* ── History: collapsible toggle on mobile ── */
+  .history-header { cursor: pointer; user-select: none; }
+  .history-header::after {
+    content: '▾';
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-left: auto;
+    transition: transform 0.2s;
+  }
+  .history-panel.collapsed .history-header::after { transform: rotate(-90deg); }
+  .history-panel.collapsed .history-list,
+  .history-panel.collapsed .date-nav,
+  .history-panel.collapsed .date-picker-input { display: none; }
+
+  /* ── Loading screen: wrap cards ── */
+  .loading-cards {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0 1rem;
+  }
+  .lcard { width: 100px; padding: 1rem 0.85rem 0.85rem; }
+
+  /* ── Scramble text: slightly smaller ── */
+  .scramble-text { font-size: 0.85rem; }
+
+  /* ── Reveal button: larger tap target ── */
+  .reveal-btn {
+    height: auto;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.6rem;
+  }
+
+  .app-header .error-toast {
+    font-size: 0.8rem;
+  }
+}
+
+/* ── Portrait (≤ 899px wide, taller than wide) ───────────────────
+   Cube centered on its own, controls below it in a row:
+   [ ↺  ◀ ⟳ ▶  ↻ ]  (z-ccw | dpad | z-cw all on one horizontal line)
+   ─────────────────────────────────────────────────────────────── */
+@media (max-width: 899px) and (orientation: portrait) {
+
+  /* Card fills height; region grows so controls can sit on the bottom */
+  .cube-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1rem 0.75rem;
+    min-height: 380px;
+    box-sizing: border-box;
+  }
+
+  .cube-region {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    /* Main vertical position of the cube — tweak this before .cube-scene transform */
+    padding-top: 2.85rem;
+  }
+
+  /* Fine-tune cube height: translateY (negative = up). Base .cube-scene uses translateY(-20px); we override here. */
+  .cube-scene {
+    transform: translateY(-2px);
+    align-self: center;
+  }
+
+  /* Pin controls to bottom of cube-region with a small gap above the card edge */
+  .ctrl-col {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: auto;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+  }
+}
+
+/* ── Landscape (≤ 899px wide but wider than tall) ────────────────
+   Cube and controls side by side, centered together
+   ─────────────────────────────────────────────────────────────── */
+@media (max-width: 899px) and (orientation: landscape) {
+
+  .cube-card { padding: 1rem 1.5rem; }
+
+  .cube-region {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10rem;
+    width: 100%;
+  }
+
+  .cube-scene {
+    transform: translateY(-6px);
+    flex-shrink: 0;
+  }
+
+  /* Controls: normal vertical stack (z-ccw on top, dpad middle, z-cw bottom) */
+  .ctrl-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+}
