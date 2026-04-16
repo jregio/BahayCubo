@@ -4,4 +4,25 @@
 {% block title %}BahayCubo{% endblock %}
 
 {% block content %}
+<div class="landing-hero">
+  <img src="{{ url_for('static', filename='favicon.svg') }}" alt="BahayCubo" class="landing-logo" />
+</div>
+<div class="landing-taglines">
+  <p class="landing-tagline-1"><strong>Bahay Cubo</strong> is a home for all cubers.</p>
+  <p class="landing-tagline-2">Just come in, train, and leave when you're done. Or stay and be a part of something.</p>
+</div>
+
+<div class="landing-about">
+  <div class="landing-about-img-wrap">
+    <img src="{{ url_for('static', filename='bahaykubo.webp') }}" alt="Bahay Kubo" class="landing-about-img" />
+    <div class="landing-location">
+      <img src="{{ url_for('static', filename='location.svg') }}" alt="" class="landing-location-pin" />
+      <div class="landing-location-label">Marinduque, Philippines</div>
+    </div>
+  </div>
+  <div class="landing-about-text">
+    <p><strong><em>"Bahay"</em></strong> means home in Tagalog.</p>
+    <p><strong><em>"Kubo"</em></strong> is the nipa hut — a simple, welcoming space <br>where everyone belongs.</p>
+  </div>
+</div>
 {% endblock %}

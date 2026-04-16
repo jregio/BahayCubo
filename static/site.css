@@ -1,5 +1,5 @@
 /* ── Google Font ─────────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
 
 /* ── Reset / base ────────────────────────────────────────────────────────── */
 *, *::before, *::after {
@@ -24,7 +24,7 @@ body {
 .site-nav {
   display: flex;
   justify-content: center;
-  padding: 5rem 3rem 2rem;
+  padding: 3rem 3rem 2rem;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -44,11 +44,14 @@ body {
   color: #1a1a1a;
   text-decoration: none;
   white-space: nowrap;
-  transition: color 0.15s ease;
+  transition: color 0.2s ease, transform 0.2s ease, letter-spacing 0.2s ease;
+  display: inline-block;
 }
 
 .site-nav a:hover {
   color: #5a3a00;
+  transform: translateY(-2px);
+  letter-spacing: 0.03em;
 }
 
 .site-nav a.active {
@@ -57,7 +60,102 @@ body {
 
 /* ── Page content wrapper ────────────────────────────────────────────────── */
 .page-content {
-  padding: 3rem;
+  padding: 1rem 3rem 3rem;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+/* ── Landing page ────────────────────────────────────────────────────────── */
+.landing-hero {
+  display: flex;
+  justify-content: center;
+  padding-top: 2rem;
+}
+
+.landing-logo {
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+}
+
+.landing-taglines {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.landing-tagline-1 {
+  font-size: 32pt;
+  font-weight: 400;
+}
+
+.landing-tagline-2 {
+  font-size: 24pt;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.landing-about {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6rem;
+  margin-top: 5rem;
+  padding: 0 5rem;
+  max-width: 1000px;
+  /* Sit on the right side of the page column — image width does not move this */
+  margin-left: auto;
+  margin-right: -3rem;
+}
+
+.landing-about-img-wrap {
+  flex: 0 0 200px;
+  position: relative;
+  width: 200px;
+}
+
+.landing-about-img {
+  width: 200px;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+}
+
+.landing-location {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.landing-location-pin {
+  width: 48px;
+  height: 48px;
+  transform: translateY(15px);
+}
+
+.landing-location-label {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12pt;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.landing-about-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  font-size: 18pt;
+  font-weight: 400;
+  line-height: 1.4;
 }

@@ -42,7 +42,7 @@ def inject_static_cache_tokens() -> Dict:
     return {
         "static_v": {
             "css": _static_mtime_token("style.css"),
-            "favicon": _static_mtime_token("favicon.png"),
+            "favicon": _static_mtime_token("favicon.svg"),
         },
     }
 

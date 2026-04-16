@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cubo Cross</title>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}?v={{ static_v.favicon }}" />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.svg') }}?v={{ static_v.favicon }}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="{{ url_for('cubocross.static', filename='style.css') }}?v={{ static_v.css }}" />
@@ -68,7 +68,7 @@
   <header class="app-header">
     <div class="app-brand" aria-label="Bahay Cubo">
       <div class="app-brand-mark">
-        <img class="app-brand-logo" src="{{ url_for('static', filename='favicon.png') }}?v={{ static_v.favicon }}" width="44" height="44" alt="" />
+        <img class="app-brand-logo" src="{{ url_for('static', filename='favicon.svg') }}?v={{ static_v.favicon }}" width="44" height="44" alt="" />
       </div>
     </div>
     <div id="error-toast" class="error-toast hidden" role="alert"></div>
