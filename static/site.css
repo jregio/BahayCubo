@@ -30,7 +30,7 @@ body {
   top: 0;
   z-index: 100;
   /* Matches body background: rgba(237, 165, 43, 0.10) over white */
-  background-color: #F4EDE0;
+  background: linear-gradient(to bottom, #F4EDE0 80%, transparent);
 }
 
 .site-nav ul {
@@ -208,7 +208,7 @@ body {
   .landing-about-img-wrap {
     flex: none;
     width: 100%;
-    max-width: 280px;
+    max-width: 200px;
   }
 
   .landing-about-img {
