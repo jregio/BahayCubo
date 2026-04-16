@@ -14,7 +14,7 @@ html, body {
 
 body {
   font-family: 'Alegreya Sans', sans-serif;
-  background-color: #EDA52B;
+  background-color: rgba(237, 165, 43, 0.10);
   color: #1a1a1a;
   min-height: 100vh;
 }
@@ -24,8 +24,6 @@ body {
   display: flex;
   justify-content: center;
   padding: 1.25rem 3rem;
-  background-color: rgba(0, 0, 0, 0.08);
-  border-bottom: 2px solid rgba(0, 0, 0, 0.12);
   position: sticky;
   top: 0;
   z-index: 100;
