@@ -15,7 +15,8 @@ html {
 
 body {
   font-family: 'Alegreya Sans', sans-serif;
-  background-color: rgba(237, 165, 43, 0.10);
+  /* rgba(237, 165, 43, 0.10) over white */
+  background-color: #F4EDE0;
   color: #1a1a1a;
   min-height: 100%;
 }
