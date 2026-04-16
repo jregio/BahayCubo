@@ -159,3 +159,62 @@ body {
   font-weight: 400;
   line-height: 1.4;
 }
+
+/* ── Mobile (iPhone and small screens) ──────────────────────────────────── */
+@media (max-width: 700px) {
+
+  .site-nav {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .site-nav ul {
+    gap: 0.5rem;
+    justify-content: space-around;
+  }
+
+  .site-nav a {
+    font-size: 11pt;
+    letter-spacing: 0;
+  }
+
+  .page-content {
+    padding: 1rem 1.25rem 3rem;
+  }
+
+  .landing-hero {
+    padding-top: 1.5rem;
+  }
+
+  .landing-tagline-1 {
+    font-size: 20pt;
+  }
+
+  .landing-tagline-2 {
+    font-size: 14pt;
+  }
+
+  .landing-about {
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+    padding: 0;
+    margin-right: auto;
+    margin-top: 3rem;
+  }
+
+  .landing-about-img-wrap {
+    flex: none;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .landing-about-img {
+    width: 100%;
+  }
+
+  .landing-about-text {
+    font-size: 14pt;
+    gap: 1.5rem;
+    text-align: center;
+  }
+}
