@@ -28,6 +28,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
+  /* Matches body background: rgba(237, 165, 43, 0.10) over white */
+  background-color: #F4EDE0;
 }
 
 .site-nav ul {
