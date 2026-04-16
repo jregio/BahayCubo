@@ -14,8 +14,7 @@ html, body {
 
 body {
   font-family: 'Alegreya Sans', sans-serif;
-  /* #EDA52B at 10% opacity as a page background tint */
-  background-color: rgba(237, 165, 43, 0.10);
+  background-color: #EDA52B;
   color: #1a1a1a;
   min-height: 100vh;
 }
@@ -23,18 +22,25 @@ body {
 /* ── Navigation ──────────────────────────────────────────────────────────── */
 .site-nav {
   display: flex;
-  align-items: center;
-  gap: 2.5rem;
+  justify-content: center;
   padding: 1.25rem 3rem;
-  background-color: rgba(237, 165, 43, 0.15);
-  border-bottom: 2px solid rgba(237, 165, 43, 0.35);
+  background-color: rgba(0, 0, 0, 0.08);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.12);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
+.site-nav ul {
+  display: flex;
+  list-style: none;
+  width: 100%;
+  max-width: 900px;
+  justify-content: space-between;
+}
+
 .site-nav a {
-  font-size: 36pt;
+  font-size: 18pt;
   font-weight: 700;
   color: #1a1a1a;
   text-decoration: none;
@@ -43,12 +49,12 @@ body {
 }
 
 .site-nav a:hover {
-  color: #c47d00;
+  color: #5a3a00;
 }
 
 .site-nav a.active {
-  color: #c47d00;
-  border-bottom: 3px solid #c47d00;
+  color: #5a3a00;
+  border-bottom: 3px solid #5a3a00;
   padding-bottom: 2px;
 }
 

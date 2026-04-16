@@ -13,10 +13,12 @@
 <body>
 
   <nav class="site-nav">
-    <a href="{{ url_for('landing') }}"   class="{{ 'active' if active_page == 'home'    }}">Bahay Cubo</a>
-    <a href="{{ url_for('webapps') }}"   class="{{ 'active' if active_page == 'webapps' }}">Webapps</a>
-    <a href="{{ url_for('aboutme') }}"   class="{{ 'active' if active_page == 'aboutme' }}">About me</a>
-    <a href="{{ url_for('contact') }}"   class="{{ 'active' if active_page == 'contact' }}">Contact me</a>
+    <ul>
+      <li><a href="{{ url_for('landing') }}" class="{{ 'active' if active_page == 'home'    }}">Bahay Cubo</a></li>
+      <li><a href="{{ url_for('webapps') }}" class="{{ 'active' if active_page == 'webapps' }}">Webapps</a></li>
+      <li><a href="{{ url_for('aboutme') }}" class="{{ 'active' if active_page == 'aboutme' }}">About me</a></li>
+      <li><a href="{{ url_for('contact') }}" class="{{ 'active' if active_page == 'contact' }}">Contact me</a></li>
+    </ul>
   </nav>
 
   <main class="page-content">
