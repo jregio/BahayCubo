@@ -3,11 +3,13 @@
 
 {% block title %}About Me — BahayCubo{% endblock %}
 
+{% block body_class %}aboutme-page{% endblock %}
+
 {% block content %}
 <div class="about-hero">
   <img src="{{ url_for('static', filename='images/profile.webp') }}" alt="Jose" class="about-profile" />
   <p class="about-greeting">Hi! I'm Jose. Thanks for being interested about me.</p>
-  <p class="about-prompt">Click the buttons below to read through my story.</p>
+  <p class="about-prompt">Press up/down keys or click the buttons below to read through my story.</p>
 </div>
 
 <div class="journey-wrap">
@@ -34,6 +36,10 @@
       </div>
     </div>
     <div class="journey-col journey-col--right" id="pers-col"></div>
+    <!-- Video overlay: spans all columns, shown only on last chapter -->
+    <video class="journey-video" id="journey-video" muted loop playsinline>
+      <source src="{{ url_for('static', filename='videos/video.mp4') }}" type="video/mp4" />
+    </video>
   </div>
 
   <!-- Down button below the viewport -->
@@ -42,6 +48,7 @@
   </div>
 
 </div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -52,7 +59,10 @@ const CHAPTER_ICONS = [
   "{{ url_for('static', filename='journey/trajectory.svg') }}",
   "{{ url_for('static', filename='journey/lessons.svg') }}",
   "{{ url_for('static', filename='journey/present.svg') }}",
+  null, // video chapter — no icon
 ];
+
+const VIDEO_URL = "{{ url_for('static', filename='videos/video.mp4') }}";
 
 const CHAPTERS = {
   technical: [
@@ -61,6 +71,7 @@ const CHAPTERS = {
     { chapter: "Life Trajectory", text: "I bounced around from computer science, to mathematical logic, and finally entering a PhD program in chemistry." },
     { chapter: "Lessons",         text: "Because of my non-linear trajectory, I learned how to keep an open mind towards problems across different domains." },
     { chapter: "Present-Day",     text: "Aside from data science and webapps, I like learning about different domains. My recent rabbit holes have been astrophysics and developmental psychology." },
+    { chapter: "A Little More",   text: "" },
   ],
   personal: [
     { chapter: "Overview",        text: "I am a Filipino-American and a proud Kuya to many special people in my life." },
@@ -68,6 +79,7 @@ const CHAPTERS = {
     { chapter: "Life Trajectory", text: "I grew up in a diverse city and was exposed to people of all cultures, socioeconomic status, and educational background." },
     { chapter: "Lessons",         text: "Because of all the different people I met growing up, I learned from a young age how to keep an open mind towards people from all backgrounds." },
     { chapter: "Present-Day",     text: "Aside from cubing, I like volunteering and educating others. I also like playing soccer and volleyball." },
+    { chapter: "A Little More",   text: "" },
   ],
 };
 
@@ -82,15 +94,21 @@ const techCol      = document.getElementById('tech-col');
 const persCol      = document.getElementById('pers-col');
 const slotsEl      = document.getElementById('journey-slots');
 const chapterTitle = document.getElementById('journey-chapter-title');
+const videoEl      = document.getElementById('journey-video');
 const upBtn        = document.getElementById('journey-up');
 const downBtn      = document.getElementById('journey-down');
 
+const VIDEO_IDX = CHAPTERS.technical.length - 1;
+
 function buildCol(colEl, track) {
   colEl.innerHTML = '';
-  CHAPTERS[track].forEach((entry) => {
+  CHAPTERS[track].forEach((entry, i) => {
     const item = document.createElement('div');
     item.className = 'journey-item';
-    item.innerHTML = `<div class="journey-item-text">${entry.text}</div>`;
+    // Video chapter: empty placeholder in both columns
+    if (i !== VIDEO_IDX) {
+      item.innerHTML = `<div class="journey-item-text">${entry.text}</div>`;
+    }
     colEl.appendChild(item);
   });
 }
@@ -100,8 +118,9 @@ function buildCenter() {
   for (let i = 0; i < TOTAL; i++) {
     const slot = document.createElement('div');
     slot.className = 'journey-slot';
+    const icon = CHAPTER_ICONS[i];
     slot.innerHTML = `<div class="journey-dot">
-      <img src="${CHAPTER_ICONS[i]}" class="journey-dot-icon" alt="" />
+      ${icon ? `<img src="${icon}" class="journey-dot-icon" alt="" />` : ''}
     </div>`;
     slotsEl.appendChild(slot);
   }
@@ -118,7 +137,10 @@ function measureHeights() {
   for (let i = 0; i < TOTAL; i++) {
     techItems[i].style.height = 'auto';
     persItems[i].style.height = 'auto';
-    const textH = Math.max(techItems[i].scrollHeight, persItems[i].scrollHeight);
+    // Video chapter gets a fixed height regardless of content
+    const textH = (i === VIDEO_IDX)
+      ? 260
+      : Math.max(techItems[i].scrollHeight, persItems[i].scrollHeight);
     const h = textH + PAD_PX;
     heights.push(h);
 
@@ -142,15 +164,11 @@ function offsetForIdx(i) {
 }
 
 function setViewport() {
-  // Fixed at the tallest possible current+next pair so the button never moves
-  let maxView = 0;
-  for (let i = 0; i < TOTAL; i++) {
-    const v = heights[i] + (heights[i + 1] ?? 0);
-    if (v > maxView) maxView = v;
-  }
-  const lineH = maxView;
-  document.querySelector('.journey').style.height      = maxView + 'px';
-  document.querySelector('.journey-line').style.height = lineH + 'px';
+  // Viewport = tallest slot + second tallest slot
+  const sorted = [...heights].sort((a, b) => b - a);
+  const viewH  = sorted[0] + sorted[1];
+  document.querySelector('.journey').style.height      = viewH + 'px';
+  document.querySelector('.journey-line').style.height = viewH + 'px';
 }
 
 function applyState() {
@@ -203,12 +221,23 @@ function applyState() {
 
   chapterTitle.textContent = CHAPTERS.technical[idx].chapter;
 
+  // Show video overlay on last chapter
+  const isVideo = idx === VIDEO_IDX;
+  videoEl.classList.toggle('visible', isVideo);
+  if (isVideo) videoEl.play(); else videoEl.pause();
+
   upBtn.disabled   = idx === 0;
   downBtn.disabled = idx === TOTAL - 1;
 }
 
 upBtn.addEventListener('click',   () => { if (idx > 0)         { idx--; applyState(); } });
 downBtn.addEventListener('click', () => { if (idx < TOTAL - 1) { idx++; applyState(); } });
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+  if (e.key === 'ArrowUp'   && idx > 0)         { idx--; applyState(); }
+  if (e.key === 'ArrowDown' && idx < TOTAL - 1) { idx++; applyState(); }
+});
 
 buildCol(techCol, 'technical');
 buildCol(persCol, 'personal');

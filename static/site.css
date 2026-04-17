@@ -265,7 +265,32 @@ body {
   font-weight: 350;
 }
 
+.contact-row--coffee {
+  position: relative;
+}
+
+.contact-halohalo {
+  position: absolute;
+  right: 2rem;
+  bottom: calc(100% - 0.5rem);
+  width: 160px;
+  border-radius: 12px;
+  opacity: 0;
+  transform: translateY(12px) scale(0.92);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+
+.contact-row--coffee:hover .contact-halohalo {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
 /* ── About me page ───────────────────────────────────────────────────────── */
+body.aboutme-page {
+  overflow: hidden;
+  height: 100dvh;
+}
 .about-hero {
   display: flex;
   flex-direction: column;
@@ -293,6 +318,27 @@ body {
   font-weight: 300;
   font-style: italic;
   color: #555;
+}
+
+.journey-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  max-width: 175px;
+  margin: 0 auto;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+  /* sit above the column text */
+  z-index: 2;
+}
+
+.journey-video.visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* ── Journey (About Me story) ────────────────────────────────────────────── */
@@ -362,6 +408,7 @@ body {
   overflow: hidden;
   align-items: start;
   padding-top: 1.5rem;
+  position: relative;
 }
 
 .journey-col {
@@ -396,6 +443,7 @@ body {
 /* Center column */
 .journey-center {
   height: 100%;
+  overflow: hidden;
 }
 
 .journey-track {
@@ -408,7 +456,7 @@ body {
 .journey-line {
   position: absolute;
   left: 50%;
-  top: -1.5rem;
+  top: 0;
   width: 4px;
   background: #1a1a1a;
   transform: translateX(-2px);
