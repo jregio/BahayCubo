@@ -5,9 +5,9 @@
 
 {% block content %}
 <div class="about-hero">
-  <img src="{{ url_for('static', filename='profile.webp') }}" alt="Jose" class="about-profile" />
+  <img src="{{ url_for('static', filename='images/profile.webp') }}" alt="Jose" class="about-profile" />
   <p class="about-greeting">Hi! I'm Jose. Thanks for being interested about me.</p>
-  <p class="about-prompt">Navigate through my story below.</p>
+  <p class="about-prompt">Click the buttons below to read through my story.</p>
 </div>
 
 <div class="journey-wrap">
@@ -46,6 +46,14 @@
 
 {% block scripts %}
 <script>
+const CHAPTER_ICONS = [
+  "{{ url_for('static', filename='journey/overview.svg') }}",
+  "{{ url_for('static', filename='journey/origins.svg') }}",
+  "{{ url_for('static', filename='journey/trajectory.svg') }}",
+  "{{ url_for('static', filename='journey/lessons.svg') }}",
+  "{{ url_for('static', filename='journey/present.svg') }}",
+];
+
 const CHAPTERS = {
   technical: [
     { chapter: "Overview",        text: "I am a data scientist with experience in machine learning and webapp development." },
@@ -66,8 +74,9 @@ const CHAPTERS = {
 const TOTAL  = CHAPTERS.technical.length;
 const PAD_PX = 48; // breathing room per slot
 
-let idx    = 0;
+let idx     = 0;
 let heights = []; // computed per-slot heights
+let pastTimers = []; // pending setTimeout ids for .past class
 
 const techCol      = document.getElementById('tech-col');
 const persCol      = document.getElementById('pers-col');
@@ -91,7 +100,9 @@ function buildCenter() {
   for (let i = 0; i < TOTAL; i++) {
     const slot = document.createElement('div');
     slot.className = 'journey-slot';
-    slot.innerHTML = `<div class="journey-dot"></div>`;
+    slot.innerHTML = `<div class="journey-dot">
+      <img src="${CHAPTER_ICONS[i]}" class="journey-dot-icon" alt="" />
+    </div>`;
     slotsEl.appendChild(slot);
   }
 }
@@ -162,13 +173,20 @@ function applyState() {
 
   const PAD_TOP      = 8;
   const DOT_INACTIVE = 16;
-  const DOT_ACTIVE   = 44;
+  const DOT_ACTIVE   = 54;
+  const SLIDE_MS     = 550; // matches CSS transition duration
+
+  // Cancel any pending .past timers before re-evaluating
+  pastTimers.forEach(t => clearTimeout(t));
+  pastTimers = [];
 
   slotsEl.querySelectorAll('.journey-slot').forEach((slot, i) => {
-    const dist    = i - idx;
-    const dot     = slot.querySelector('.journey-dot');
+    const dist = i - idx;
+    const dot  = slot.querySelector('.journey-dot');
+
+    // Always remove .past first so dots are visible during the slide
+    dot.classList.remove('past');
     dot.classList.toggle('active', dist === 0);
-    dot.classList.toggle('past',   dist < 0);
     slot.style.opacity = '1';
 
     // Re-center dot for its new size
@@ -176,6 +194,11 @@ function applyState() {
     const dotSize = dist === 0 ? DOT_ACTIVE : DOT_INACTIVE;
     const margin  = PAD_TOP + (textH / 2) - (dotSize / 2);
     dot.style.marginTop = Math.max(0, margin) + 'px';
+
+    // Hide past dots only after the slide finishes
+    if (dist < 0) {
+      pastTimers.push(setTimeout(() => dot.classList.add('past'), SLIDE_MS));
+    }
   });
 
   chapterTitle.textContent = CHAPTERS.technical[idx].chapter;

@@ -444,21 +444,38 @@ body {
   border: 3px solid #1a1a1a;
   box-sizing: border-box;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1),
               height 0.55s cubic-bezier(0.4, 0, 0.2, 1),
               background 0.55s ease,
-              margin-top 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+              margin-top 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease;
 }
 
 .journey-dot.active {
-  width: 44px;
-  height: 44px;
+  width: 54px;
+  height: 54px;
   background: #1a1a1a;
 }
 
 .journey-dot.past {
   opacity: 0;
   pointer-events: none;
+}
+
+.journey-dot-icon {
+  width: 55%;
+  height: 55%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.journey-dot.active .journey-dot-icon {
+  opacity: 1;
 }
 
 /* ── Mobile (iPhone and small screens) ──────────────────────────────────── */
