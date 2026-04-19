@@ -488,7 +488,6 @@ body.aboutme-page {
 /* Center column */
 .journey-center {
   height: 100%;
-  overflow: hidden;
 }
 
 .journey-track {
@@ -761,7 +760,7 @@ body.aboutme-page {
   }
 
   :root {
-    --journey-center: 24px;
+    --journey-center: 56px;
   }
 
   .journey-wrap {
