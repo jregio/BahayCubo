@@ -163,31 +163,46 @@ function measureHeights() {
   const techItems = techCol.querySelectorAll('.journey-item');
   const persItems = persCol.querySelectorAll('.journey-item');
   const slots     = slotsEl.querySelectorAll('.journey-slot');
-  const firstDot2 = slotsEl.querySelector('.journey-dot');
-  const DOT_SIZE  = firstDot2 ? firstDot2.offsetWidth : 16;
 
+  // Read actual dot size and item padding-top from the live DOM
+  const firstDot  = slotsEl.querySelector('.journey-dot');
+  const DOT_SIZE  = firstDot ? firstDot.offsetWidth : 16;
+  const firstItem = techItems[0];
+  const PAD_TOP   = firstItem
+    ? parseInt(getComputedStyle(firstItem).paddingTop) || 0
+    : 0;
+
+  // Pass 1: measure natural text heights with items unconstrained
+  const textHeights = [];
   for (let i = 0; i < TOTAL; i++) {
     techItems[i].style.height = 'auto';
     persItems[i].style.height = 'auto';
-    // Video chapter gets a fixed height regardless of content
+  }
+  // Force reflow so scrollHeight is accurate
+  void techItems[0].offsetHeight;
+
+  for (let i = 0; i < TOTAL; i++) {
     const textH = (i === VIDEO_IDX)
       ? 260
       : Math.max(techItems[i].scrollHeight, persItems[i].scrollHeight);
-    const h = textH + PAD_PX;
-    heights.push(h);
-
-    // Center dot with the text block: pad-top + half text height - half dot size
-    const PAD_TOP = 8; // matches CSS padding-top: 0.5rem ≈ 8px
-    const dotMargin = PAD_TOP + (textH / 2) - (DOT_SIZE / 2);
-    const dot = slots[i].querySelector('.journey-dot');
-    dot.style.marginTop = Math.max(0, dotMargin) + 'px';
+    textHeights.push(textH);
+    heights.push(textH + PAD_PX);
   }
 
+  // Pass 2: apply fixed heights
   for (let i = 0; i < TOTAL; i++) {
     techItems[i].style.height = heights[i] + 'px';
     persItems[i].style.height = heights[i] + 'px';
     slots[i].style.height     = heights[i] + 'px';
   }
+
+  // Pass 3: set dot margins after heights are locked
+  for (let i = 0; i < TOTAL; i++) {
+    const dotMargin = PAD_TOP + (textHeights[i] / 2) - (DOT_SIZE / 2);
+    const dot = slots[i].querySelector('.journey-dot');
+    dot.style.marginTop = Math.max(0, dotMargin) + 'px';
+  }
+
   setViewport();
 }
 
@@ -300,6 +315,11 @@ buildCol(persCol, 'personal');
 buildCenter();
 // Double rAF: first frame paints CSS (incl. mobile overrides), second measures
 requestAnimationFrame(() => requestAnimationFrame(() => { measureHeights(); applyState(); }));
+
+// Re-measure on resize/orientation change
+window.addEventListener('resize', () => {
+  requestAnimationFrame(() => requestAnimationFrame(() => { measureHeights(); applyState(); }));
+});
 
 </script>
 {% endblock %}
