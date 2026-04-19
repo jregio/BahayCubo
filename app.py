@@ -33,6 +33,10 @@ def aboutme():
 def contact():
     return render_template("contact.html")
 
+@app.route('/sitemap.xml')
+def sitemap():
+    return app.send_static_file('sitemap.xml')
+
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000, debug=False, threaded=True, use_reloader=False)
