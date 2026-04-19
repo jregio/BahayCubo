@@ -301,9 +301,6 @@ body.aboutme-page {
   text-align: center;
   gap: 1rem;
   margin-top: 0rem;
-  position: relative;
-  z-index: 5;
-  background: #F4EDE0;
 }
 
 .about-profile {
@@ -398,9 +395,6 @@ body.aboutme-page {
   width: 100%;
   align-items: center;
   margin-bottom: 0;
-  position: relative;
-  z-index: 5;
-  background: #F4EDE0;
 }
 
 /* Up button lives in the center header cell */
@@ -425,9 +419,6 @@ body.aboutme-page {
   letter-spacing: 0.02em;
   min-height: 1.4em;
   margin-bottom: 0.25rem;
-  position: relative;
-  z-index: 5;
-  background: #F4EDE0;
 }
 
 
@@ -463,12 +454,12 @@ body.aboutme-page {
 }
 
 .journey-col {
+  overflow: hidden;
   position: relative;
   z-index: 1;
   transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
-
 
 /* height set by JS per slot */
 .journey-item {
@@ -499,8 +490,7 @@ body.aboutme-page {
 /* Center column */
 .journey-center {
   height: 100%;
-  position: relative;
-  z-index: 2;
+  overflow: hidden;
 }
 
 .journey-track {
@@ -759,6 +749,10 @@ body.aboutme-page {
   .desktop-prompt { display: none; }
   .touch-prompt   { display: block; }
 
+  .journey {
+    gap: 0;
+  }
+
   .about-profile {
     width: 110px;
     height: 110px;
@@ -781,7 +775,7 @@ body.aboutme-page {
   }
 
   .journey-headers {
-    gap: 0.5rem;
+    gap: 0;
   }
 
   .journey-header {
