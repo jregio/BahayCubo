@@ -755,42 +755,144 @@ body.aboutme-page {
     display: none;
   }
 
-  :root {
-    --journey-center: 72px;
-  }
-
+  /* ── Horizontal journey layout for mobile ── */
   .journey-wrap {
-    margin-top: 1rem;
+    margin-top: 0.75rem;
   }
 
+  /* Hide the desktop headers/chapter-title row — replaced by horiz labels */
   .journey-headers {
-    gap: 0.5rem;
+    display: none;
   }
 
-  .journey-header {
+  /* Horizontal wrapper */
+  .journey--horiz {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+    padding-top: 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Top row: technical text ribbon */
+  .journey-horiz-top {
+    overflow: hidden;
+    position: relative;
+  }
+
+  .journey-horiz-top-label {
     font-size: 9pt;
+    font-weight: 700;
+    color: #555;
+    text-align: center;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.3rem;
   }
 
-  .journey-chapter-title {
-    font-size: 13pt;
+  .journey-horiz-ribbon {
+    display: flex;
+    flex-direction: row;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
   }
 
-  .journey-item-text {
+  .journey-horiz-item {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.5rem 0.75rem;
+    transition: opacity 0.55s ease;
+  }
+
+  .journey-horiz-item .journey-item-text {
     font-size: 12pt;
   }
 
-  .journey-item.active .journey-item-text {
+  .journey-horiz-item.active .journey-item-text {
+    font-size: 13pt;
+    font-weight: 500;
+  }
+
+  /* Center row: horizontal line + dots + chapter title */
+  .journey-horiz-center {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    height: 56px;
+    margin: 0.5rem 0;
+  }
+
+  .journey-horiz-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 4px;
+    background: #1a1a1a;
+    /* width set by JS */
+  }
+
+  .journey-horiz-slots {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+
+  .journey-horiz-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    height: 100%;
+    transition: opacity 0.55s ease;
+  }
+
+  .journey-horiz-chapter {
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 2px;
+    transition: opacity 0.55s ease;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Bottom row: personal text ribbon */
+  .journey-horiz-bottom {
+    overflow: hidden;
+    position: relative;
+  }
+
+  .journey-horiz-bottom-label {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #555;
+    text-align: center;
+    letter-spacing: 0.04em;
+    margin-top: 0.3rem;
+  }
+
+  /* chapter title above everything */
+  .journey-horiz-title {
+    text-align: center;
     font-size: 14pt;
-  }
-
-  .journey-dot {
-    width: 12px;
-    height: 12px;
-  }
-
-  .journey-dot.active {
-    width: 36px;
-    height: 36px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
   }
 
   .journey-video {
