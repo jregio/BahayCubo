@@ -51,7 +51,13 @@
 
 {% endblock %}
 
+<!-- Video lightbox (outside page-content so it covers everything) -->
 {% block scripts %}
+<div class="video-lightbox" id="video-lightbox">
+  <video id="lightbox-video" controls playsinline>
+    <source src="{{ url_for('static', filename='videos/video.mp4') }}" type="video/mp4" />
+  </video>
+</div>
 <script>
 const CHAPTER_ICONS = [
   "{{ url_for('static', filename='journey/overview.svg') }}",
@@ -95,6 +101,31 @@ const persCol      = document.getElementById('pers-col');
 const slotsEl      = document.getElementById('journey-slots');
 const chapterTitle = document.getElementById('journey-chapter-title');
 const videoEl      = document.getElementById('journey-video');
+const lightbox     = document.getElementById('video-lightbox');
+const lightboxVid  = document.getElementById('lightbox-video');
+
+// Open lightbox on click
+videoEl.addEventListener('click', () => {
+  lightbox.classList.add('open');
+  lightboxVid.currentTime = 0;
+  lightboxVid.play();
+});
+
+// Close lightbox on backdrop click
+lightbox.addEventListener('click', (e) => {
+  if (e.target === lightbox) {
+    lightbox.classList.remove('open');
+    lightboxVid.pause();
+  }
+});
+
+// Close on Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+    lightbox.classList.remove('open');
+    lightboxVid.pause();
+  }
+});
 const upBtn        = document.getElementById('journey-up');
 const downBtn      = document.getElementById('journey-down');
 
@@ -164,9 +195,11 @@ function offsetForIdx(i) {
 }
 
 function setViewport() {
-  // Viewport = tallest slot + second tallest slot
-  const sorted = [...heights].sort((a, b) => b - a);
-  const viewH  = sorted[0] + sorted[1];
+  // Exclude the video slot from sizing — it's an outlier
+  const textHeights = heights.slice(0, VIDEO_IDX);
+  const maxH = Math.max(...textHeights);
+  // Viewport = tallest text slot * 2 (current + peek)
+  const viewH = maxH * 2;
   document.querySelector('.journey').style.height      = viewH + 'px';
   document.querySelector('.journey-line').style.height = viewH + 'px';
 }

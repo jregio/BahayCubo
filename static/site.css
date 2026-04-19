@@ -331,14 +331,45 @@ body.aboutme-page {
   box-shadow: 0 8px 28px rgba(0,0,0,0.14);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.45s ease;
-  /* sit above the column text */
-  z-index: 2;
+  transition: opacity 0.45s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 20;
+  cursor: pointer;
 }
 
 .journey-video.visible {
   opacity: 1;
   pointer-events: auto;
+}
+
+.journey-video.visible:hover {
+  transform: scale(1.06);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.22);
+}
+
+/* Lightbox */
+.video-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.video-lightbox.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.video-lightbox video {
+  width: 90vw;
+  max-width: 860px;
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
 }
 
 /* ── Journey (About Me story) ────────────────────────────────────────────── */
@@ -405,13 +436,14 @@ body.aboutme-page {
   grid-template-columns: 1fr var(--journey-center) 1fr;
   gap: 1.5rem;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
   align-items: start;
   padding-top: 1.5rem;
   position: relative;
 }
 
 .journey-col {
+  overflow: hidden;
   transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
