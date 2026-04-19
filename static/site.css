@@ -634,7 +634,11 @@ body.aboutme-page {
 @media (max-width: 700px) {
 
   .site-nav {
-    padding: 1.5rem 1rem 2.5rem 1rem;
+    padding: 1rem 1rem 1rem 1rem;
+  }
+
+  body.aboutme-page .site-nav {
+    padding-bottom: 0.5rem;
   }
 
   .site-nav ul {
