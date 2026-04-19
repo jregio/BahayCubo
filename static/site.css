@@ -301,6 +301,9 @@ body.aboutme-page {
   text-align: center;
   gap: 1rem;
   margin-top: 0rem;
+  position: relative;
+  z-index: 5;
+  background: #F4EDE0;
 }
 
 .about-profile {
