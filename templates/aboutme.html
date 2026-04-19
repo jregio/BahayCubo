@@ -53,6 +53,7 @@
 <!-- Video lightbox (outside page-content so it covers everything) -->
 {% block scripts %}
 <div class="video-lightbox" id="video-lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
   <video id="lightbox-video" controls playsinline>
     <source src="{{ url_for('static', filename='videos/video.mp4') }}" type="video/mp4" />
   </video>
@@ -102,30 +103,29 @@ const persCol      = document.getElementById('pers-col');
 const slotsEl      = document.getElementById('journey-slots');
 const chapterTitle = document.getElementById('journey-chapter-title');
 const videoEl      = document.getElementById('journey-video');
-const lightbox     = document.getElementById('video-lightbox');
-const lightboxVid  = document.getElementById('lightbox-video');
+const lightbox      = document.getElementById('video-lightbox');
+const lightboxVid   = document.getElementById('lightbox-video');
+const lightboxClose = document.getElementById('lightbox-close');
 
-// Open lightbox on click
-videoEl.addEventListener('click', () => {
+function openLightbox() {
   lightbox.classList.add('open');
   lightboxVid.currentTime = 0;
   lightboxVid.play();
-});
+}
 
-// Close lightbox on backdrop click
-lightbox.addEventListener('click', (e) => {
-  if (e.target === lightbox) {
-    lightbox.classList.remove('open');
-    lightboxVid.pause();
-  }
-});
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  lightboxVid.pause();
+}
 
-// Close on Escape
+// Open on click
+videoEl.addEventListener('click', openLightbox);
+
+// Close via X button, backdrop click, or Escape
+lightboxClose.addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && lightbox.classList.contains('open')) {
-    lightbox.classList.remove('open');
-    lightboxVid.pause();
-  }
+  if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
 });
 const upBtn        = document.getElementById('journey-up');
 const downBtn      = document.getElementById('journey-down');

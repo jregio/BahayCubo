@@ -375,6 +375,36 @@ body.aboutme-page {
   box-shadow: 0 24px 64px rgba(0,0,0,0.5);
 }
 
+.lightbox-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #fff;
+  font-size: 20pt;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.lightbox-close:hover {
+  background: rgba(255,255,255,0.28);
+}
+
+/* On mobile, disable the hover-scale on the thumbnail */
+@media (hover: none) {
+  .journey-video.visible:hover {
+    transform: none;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+  }
+}
+
 /* ── Journey (About Me story) ────────────────────────────────────────────── */
 :root {
   --journey-center: 160px;
