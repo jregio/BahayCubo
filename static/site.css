@@ -212,12 +212,12 @@ body {
 
 /* ── Contact page ────────────────────────────────────────────────────────── */
 .contact-intro {
-  font-size: 14pt;
-  font-weight: 300;
-  font-style: italic;
+  font-size: 28pt;
+  font-weight: 700;
   text-align: center;
-  color: #888;
-  margin-bottom: 1rem;
+  color: #1a1a1a;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.75rem;
 }
 
 .contact-list {
@@ -772,7 +772,7 @@ body.aboutme-page {
   }
 
   .contact-intro {
-    font-size: 15pt;
+    font-size: 18pt;
   }
 
   .contact-icon {
