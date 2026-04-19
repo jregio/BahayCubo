@@ -393,7 +393,13 @@ body.aboutme-page {
   grid-template-columns: 1fr var(--journey-center) 1fr;
   gap: 1.5rem;
   width: 100%;
-  margin-bottom: 0.2rem;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+/* Up button lives in the center header cell */
+.journey-headers .journey-btn {
+  justify-self: center;
 }
 
 .journey-header {
@@ -470,6 +476,8 @@ body.aboutme-page {
   font-weight: 400;
   line-height: 1.55;
   color: #1a1a1a;
+  text-align: justify;
+  hyphens: auto;
   transition: font-size 0.55s ease;
 }
 
