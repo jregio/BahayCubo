@@ -15,19 +15,19 @@
 
 <div class="journey-wrap">
 
-  <!-- Chapter title: full width, above the column headers -->
+  <!-- Chapter title: full width -->
   <div class="journey-chapter-title" id="journey-chapter-title"></div>
 
-  <!-- Column headers -->
+  <!-- Up button -->
+  <div class="journey-btn-row">
+    <button class="journey-btn" id="journey-up" aria-label="Previous">▲</button>
+  </div>
+
+  <!-- Column headers: sit directly above the text columns -->
   <div class="journey-headers">
     <div class="journey-header">Technical Background</div>
     <div class="journey-header-mid"></div>
     <div class="journey-header">Personal Background</div>
-  </div>
-
-  <!-- Up button above the viewport -->
-  <div class="journey-btn-row">
-    <button class="journey-btn" id="journey-up" aria-label="Previous">▲</button>
   </div>
 
   <!-- Clipped viewport -->
@@ -205,17 +205,16 @@ function setViewport() {
   const maxH = Math.max(...textHeights);
   const natural = maxH * 2;
 
-  // Measure actual space between the journey top and the bottom of the viewport,
-  // then subtract the down-button height so it stays visible.
+  // Cap to available space: from journey top to bottom of viewport minus down button
   const journeyEl  = document.querySelector('.journey');
   const downBtnRow = downBtn.closest('.journey-btn-row');
   const journeyTop = journeyEl.getBoundingClientRect().top;
-  const btnH       = downBtnRow ? downBtnRow.offsetHeight + 8 : 50;
+  const btnH       = downBtnRow ? downBtnRow.offsetHeight : 40;
   const maxAllowed = window.innerHeight - journeyTop - btnH;
 
   const viewH = Math.min(natural, Math.max(maxAllowed, 80));
 
-  journeyEl.style.height                              = viewH + 'px';
+  journeyEl.style.height                               = viewH + 'px';
   document.querySelector('.journey-line').style.height = viewH + 'px';
 }
 
@@ -304,8 +303,8 @@ document.addEventListener('touchend', (e) => {
 buildCol(techCol, 'technical');
 buildCol(persCol, 'personal');
 buildCenter();
-// measure after DOM is painted so scrollHeight is accurate
-requestAnimationFrame(() => { measureHeights(); applyState(); });
+// Double rAF: first frame paints CSS (incl. mobile overrides), second measures
+requestAnimationFrame(() => requestAnimationFrame(() => { measureHeights(); applyState(); }));
 
 </script>
 {% endblock %}

@@ -393,7 +393,7 @@ body.aboutme-page {
   grid-template-columns: 1fr var(--journey-center) 1fr;
   gap: 1.5rem;
   width: 100%;
-  margin-bottom: 0rem;
+  margin-bottom: 0.2rem;
 }
 
 .journey-header {
@@ -444,7 +444,6 @@ body.aboutme-page {
   width: 100%;
   overflow: visible;
   align-items: start;
-  padding-top: 1.5rem;
   position: relative;
 }
 
