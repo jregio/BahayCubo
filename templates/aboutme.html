@@ -198,11 +198,19 @@ function offsetForIdx(i) {
 }
 
 function setViewport() {
-  // Exclude the video slot from sizing — it's an outlier
   const textHeights = heights.slice(0, VIDEO_IDX);
   const maxH = Math.max(...textHeights);
-  // Viewport = tallest text slot * 2 (current + peek)
-  const viewH = maxH * 2;
+  const natural = maxH * 2;
+
+  // On small screens, cap so the line + buttons stay within the viewport.
+  // Reserve space for: nav (~80px), hero (~180px), headers+btn (~80px), bottom btn (~50px)
+  const isMobile = window.innerWidth <= 700;
+  const maxAllowed = isMobile
+    ? window.innerHeight - 80 - 180 - 80 - 50
+    : Infinity;
+
+  const viewH = Math.min(natural, maxAllowed);
+
   document.querySelector('.journey').style.height      = viewH + 'px';
   document.querySelector('.journey-line').style.height = viewH + 'px';
 }

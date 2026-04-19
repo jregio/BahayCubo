@@ -750,11 +750,6 @@ body.aboutme-page {
     font-size: 14pt;
   }
 
-  /* Hide nav buttons — swipe handles navigation */
-  .journey-btn-row {
-    display: none;
-  }
-
   :root {
     --journey-center: 72px;
   }
