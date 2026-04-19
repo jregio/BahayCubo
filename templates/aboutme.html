@@ -203,13 +203,10 @@ function measureHeights() {
     slots[i].style.height     = heights[i] + 'px';
   }
 
-  // Center dot at the vertical midpoint of the slot
-  const firstDot = slots[0].querySelector('.journey-dot');
-  const DOT_SIZE = firstDot ? firstDot.offsetWidth : 16;
-  for (let i = 0; i < TOTAL; i++) {
-    const dotMargin = (heights[i] / 2) - (DOT_SIZE / 2);
-    slots[i].querySelector('.journey-dot').style.marginTop = Math.max(0, dotMargin) + 'px';
-  }
+  // Clear any stale marginTop — centering handled by CSS flex on .journey-slot
+  slots.forEach(slot => {
+    slot.querySelector('.journey-dot').style.marginTop = '';
+  });
 
   setViewport();
 }
