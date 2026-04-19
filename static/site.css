@@ -217,14 +217,13 @@ body {
   text-align: center;
   color: #1a1a1a;
   letter-spacing: -0.02em;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1rem;
 }
 
 .contact-list {
   display: flex;
   flex-direction: column;
   gap: 0.90rem;
-  margin-top: 0.25rem;
   max-width: 100%;
 }
 
