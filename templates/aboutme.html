@@ -92,9 +92,10 @@ const TOTAL  = CHAPTERS.technical.length;
 // Less padding on touch/mobile since slots need to fit in a short viewport
 const PAD_PX = window.matchMedia('(max-width: 700px)').matches ? 24 : 48;
 
-let idx     = 0;
-let heights = []; // computed per-slot heights
+let idx        = 0;
+let heights    = []; // computed per-slot heights
 let pastTimers = []; // pending setTimeout ids for .past class
+let itemPadTop = 0; // actual rendered padding-top of journey-item, read from DOM
 
 const techCol      = document.getElementById('tech-col');
 const persCol      = document.getElementById('pers-col');
@@ -168,7 +169,7 @@ function measureHeights() {
   const firstDot  = slotsEl.querySelector('.journey-dot');
   const DOT_SIZE  = firstDot ? firstDot.offsetWidth : 16;
   const firstItem = techItems[0];
-  const PAD_TOP   = firstItem
+  itemPadTop = firstItem
     ? parseInt(getComputedStyle(firstItem).paddingTop) || 0
     : 0;
 
@@ -198,7 +199,7 @@ function measureHeights() {
 
   // Pass 3: set dot margins after heights are locked
   for (let i = 0; i < TOTAL; i++) {
-    const dotMargin = PAD_TOP + (textHeights[i] / 2) - (DOT_SIZE / 2);
+    const dotMargin = itemPadTop + (textHeights[i] / 2) - (DOT_SIZE / 2);
     const dot = slots[i].querySelector('.journey-dot');
     dot.style.marginTop = Math.max(0, dotMargin) + 'px';
   }
@@ -246,7 +247,6 @@ function applyState() {
     });
   });
 
-  const PAD_TOP      = 8;
   // Read actual rendered dot size so mobile CSS overrides are respected
   const firstDot     = slotsEl.querySelector('.journey-dot');
   const DOT_INACTIVE = firstDot ? firstDot.offsetWidth : 16;
@@ -266,10 +266,10 @@ function applyState() {
     dot.classList.toggle('active', dist === 0);
     slot.style.opacity = '1';
 
-    // Re-center dot for its new size
+    // Re-center dot for its new size using the same PAD_TOP as measureHeights
     const textH   = heights[i] - PAD_PX;
     const dotSize = dist === 0 ? DOT_ACTIVE : DOT_INACTIVE;
-    const margin  = PAD_TOP + (textH / 2) - (dotSize / 2);
+    const margin  = itemPadTop + (textH / 2) - (dotSize / 2);
     dot.style.marginTop = Math.max(0, margin) + 'px';
 
     // Hide past dots only after the slide finishes
