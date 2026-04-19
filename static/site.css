@@ -398,6 +398,9 @@ body.aboutme-page {
   width: 100%;
   align-items: center;
   margin-bottom: 0;
+  position: relative;
+  z-index: 5;
+  background: #F4EDE0;
 }
 
 /* Up button lives in the center header cell */
@@ -422,6 +425,9 @@ body.aboutme-page {
   letter-spacing: 0.02em;
   min-height: 1.4em;
   margin-bottom: 0.25rem;
+  position: relative;
+  z-index: 5;
+  background: #F4EDE0;
 }
 
 
