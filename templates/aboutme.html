@@ -90,49 +90,55 @@ const CHAPTERS = {
   ],
 };
 
-const TOTAL     = CHAPTERS.technical.length;
-const VIDEO_IDX = TOTAL - 1;
-const IS_MOBILE = () => window.matchMedia('(max-width: 700px)').matches;
-const PAD_PX    = 48; // desktop breathing room; mobile uses different layout
+const TOTAL  = CHAPTERS.technical.length;
+// Less padding on touch/mobile since slots need to fit in a short viewport
+const PAD_PX = window.matchMedia('(max-width: 700px)').matches ? 24 : 48;
 
-let idx        = 0;
-let heights    = [];
-let slotWidths = []; // horizontal mode
-let pastTimers = [];
+let idx     = 0;
+let heights = []; // computed per-slot heights
+let pastTimers = []; // pending setTimeout ids for .past class
 
-// ── DOM refs ──────────────────────────────────────────────────────────────
-const journeyEl   = document.querySelector('.journey');
-const techCol     = document.getElementById('tech-col');
-const persCol     = document.getElementById('pers-col');
-const slotsEl     = document.getElementById('journey-slots');
-const chapterTitle= document.getElementById('journey-chapter-title');
-const videoEl     = document.getElementById('journey-video');
-const lightbox    = document.getElementById('video-lightbox');
-const lightboxVid = document.getElementById('lightbox-video');
-const upBtn       = document.getElementById('journey-up');
-const downBtn     = document.getElementById('journey-down');
+const techCol      = document.getElementById('tech-col');
+const persCol      = document.getElementById('pers-col');
+const slotsEl      = document.getElementById('journey-slots');
+const chapterTitle = document.getElementById('journey-chapter-title');
+const videoEl      = document.getElementById('journey-video');
+const lightbox     = document.getElementById('video-lightbox');
+const lightboxVid  = document.getElementById('lightbox-video');
 
-// Lightbox
+// Open lightbox on click
 videoEl.addEventListener('click', () => {
   lightbox.classList.add('open');
   lightboxVid.currentTime = 0;
   lightboxVid.play();
 });
+
+// Close lightbox on backdrop click
 lightbox.addEventListener('click', (e) => {
-  if (e.target === lightbox) { lightbox.classList.remove('open'); lightboxVid.pause(); }
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && lightbox.classList.contains('open')) {
-    lightbox.classList.remove('open'); lightboxVid.pause();
+  if (e.target === lightbox) {
+    lightbox.classList.remove('open');
+    lightboxVid.pause();
   }
 });
 
-// ── Desktop (vertical) layout ─────────────────────────────────────────────
+// Close on Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+    lightbox.classList.remove('open');
+    lightboxVid.pause();
+  }
+});
+const upBtn        = document.getElementById('journey-up');
+const downBtn      = document.getElementById('journey-down');
+
+const VIDEO_IDX = CHAPTERS.technical.length - 1;
+
 function buildCol(colEl, track) {
   colEl.innerHTML = '';
   CHAPTERS[track].forEach((entry, i) => {
     const item = document.createElement('div');
     item.className = 'journey-item';
+    // Video chapter: empty placeholder in both columns
     if (i !== VIDEO_IDX) {
       item.innerHTML = `<div class="journey-item-text">${entry.text}</div>`;
     }
@@ -153,25 +159,32 @@ function buildCenter() {
   }
 }
 
+// Measure the natural text height for each slot across both columns
 function measureHeights() {
   heights = [];
   const techItems = techCol.querySelectorAll('.journey-item');
   const persItems = persCol.querySelectorAll('.journey-item');
   const slots     = slotsEl.querySelectorAll('.journey-slot');
-  const firstDot  = slotsEl.querySelector('.journey-dot');
-  const DOT_SIZE  = firstDot ? firstDot.offsetWidth : 16;
+  const firstDot2 = slotsEl.querySelector('.journey-dot');
+  const DOT_SIZE  = firstDot2 ? firstDot2.offsetWidth : 16;
 
   for (let i = 0; i < TOTAL; i++) {
     techItems[i].style.height = 'auto';
     persItems[i].style.height = 'auto';
-    const textH = (i === VIDEO_IDX) ? 260
+    // Video chapter gets a fixed height regardless of content
+    const textH = (i === VIDEO_IDX)
+      ? 260
       : Math.max(techItems[i].scrollHeight, persItems[i].scrollHeight);
     const h = textH + PAD_PX;
     heights.push(h);
-    const PAD_TOP   = 8;
+
+    // Center dot with the text block: pad-top + half text height - half dot size
+    const PAD_TOP = 8; // matches CSS padding-top: 0.5rem ≈ 8px
     const dotMargin = PAD_TOP + (textH / 2) - (DOT_SIZE / 2);
-    slots[i].querySelector('.journey-dot').style.marginTop = Math.max(0, dotMargin) + 'px';
+    const dot = slots[i].querySelector('.journey-dot');
+    dot.style.marginTop = Math.max(0, dotMargin) + 'px';
   }
+
   for (let i = 0; i < TOTAL; i++) {
     techItems[i].style.height = heights[i] + 'px';
     persItems[i].style.height = heights[i] + 'px';
@@ -180,221 +193,107 @@ function measureHeights() {
   setViewport();
 }
 
+function offsetForIdx(i) {
+  return heights.slice(0, i).reduce((a, b) => a + b, 0);
+}
+
 function setViewport() {
+  // Exclude the video slot from sizing — it's an outlier
   const textHeights = heights.slice(0, VIDEO_IDX);
-  const maxH  = Math.max(...textHeights);
+  const maxH = Math.max(...textHeights);
+  // Viewport = tallest text slot * 2 (current + peek)
   const viewH = maxH * 2;
-  journeyEl.style.height = viewH + 'px';
+  document.querySelector('.journey').style.height      = viewH + 'px';
   document.querySelector('.journey-line').style.height = viewH + 'px';
 }
 
-function applyStateDesktop() {
-  const offset = -heights.slice(0, idx).reduce((a, b) => a + b, 0);
-  techCol.style.transform = `translateY(${offset}px)`;
-  persCol.style.transform = `translateY(${offset}px)`;
-  slotsEl.style.transform = `translateY(${offset}px)`;
+function applyState() {
+  const offset = -offsetForIdx(idx);
+
+  techCol.style.transform  = `translateY(${offset}px)`;
+  persCol.style.transform  = `translateY(${offset}px)`;
+  slotsEl.style.transform  = `translateY(${offset}px)`;
 
   [techCol, persCol].forEach(col => {
     col.querySelectorAll('.journey-item').forEach((item, i) => {
       const dist = i - idx;
       item.classList.toggle('active', dist === 0);
-      item.style.opacity = dist < 0 ? '0' : dist === 0 ? '1' : dist === 1 ? '0.3' : '0.1';
+      if      (dist < 0)   item.style.opacity = '0';
+      else if (dist === 0) item.style.opacity = '1';
+      else if (dist === 1) item.style.opacity = '0.3';
+      else                 item.style.opacity = '0.1';
     });
   });
 
+  const PAD_TOP      = 8;
+  // Read actual rendered dot size so mobile CSS overrides are respected
   const firstDot     = slotsEl.querySelector('.journey-dot');
   const DOT_INACTIVE = firstDot ? firstDot.offsetWidth : 16;
-  const DOT_ACTIVE   = DOT_INACTIVE * 3.375;
-  const SLIDE_MS     = 550;
+  const DOT_ACTIVE   = DOT_INACTIVE * 3.375; // matches active scale ratio (54/16)
+  const SLIDE_MS     = 550; // matches CSS transition duration
+
+  // Cancel any pending .past timers before re-evaluating
   pastTimers.forEach(t => clearTimeout(t));
   pastTimers = [];
 
   slotsEl.querySelectorAll('.journey-slot').forEach((slot, i) => {
     const dist = i - idx;
     const dot  = slot.querySelector('.journey-dot');
+
+    // Always remove .past first so dots are visible during the slide
     dot.classList.remove('past');
     dot.classList.toggle('active', dist === 0);
     slot.style.opacity = '1';
+
+    // Re-center dot for its new size
     const textH   = heights[i] - PAD_PX;
     const dotSize = dist === 0 ? DOT_ACTIVE : DOT_INACTIVE;
-    dot.style.marginTop = Math.max(0, 8 + (textH / 2) - (dotSize / 2)) + 'px';
-    if (dist < 0) pastTimers.push(setTimeout(() => dot.classList.add('past'), SLIDE_MS));
+    const margin  = PAD_TOP + (textH / 2) - (dotSize / 2);
+    dot.style.marginTop = Math.max(0, margin) + 'px';
+
+    // Hide past dots only after the slide finishes
+    if (dist < 0) {
+      pastTimers.push(setTimeout(() => dot.classList.add('past'), SLIDE_MS));
+    }
   });
 
   chapterTitle.textContent = CHAPTERS.technical[idx].chapter;
+
+  // Show video overlay on last chapter
   const isVideo = idx === VIDEO_IDX;
   videoEl.classList.toggle('visible', isVideo);
   if (isVideo) videoEl.play(); else videoEl.pause();
+
   upBtn.disabled   = idx === 0;
   downBtn.disabled = idx === TOTAL - 1;
 }
 
-// ── Mobile (horizontal) layout ────────────────────────────────────────────
-let horizTechRibbon, horizPersRibbon, horizSlotsRibbon, horizTitle;
-
-function buildHoriz() {
-  // Replace journey content with horizontal structure
-  journeyEl.classList.add('journey--horiz');
-  journeyEl.innerHTML = `
-    <div class="journey-horiz-title" id="horiz-title"></div>
-    <div class="journey-horiz-top">
-      <div class="journey-horiz-top-label">Technical Background</div>
-      <div class="journey-horiz-ribbon" id="horiz-tech"></div>
-    </div>
-    <div class="journey-horiz-center" id="horiz-center">
-      <div class="journey-horiz-line" id="horiz-line"></div>
-      <div class="journey-horiz-slots" id="horiz-slots"></div>
-    </div>
-    <div class="journey-horiz-bottom">
-      <div class="journey-horiz-ribbon" id="horiz-pers"></div>
-      <div class="journey-horiz-bottom-label">Personal Background</div>
-    </div>`;
-
-  horizTitle       = document.getElementById('horiz-title');
-  horizTechRibbon  = document.getElementById('horiz-tech');
-  horizPersRibbon  = document.getElementById('horiz-pers');
-  horizSlotsRibbon = document.getElementById('horiz-slots');
-  const horizLine  = document.getElementById('horiz-line');
-
-  const slotW = window.innerWidth; // each slot = full viewport width
-
-  // Build tech ribbon
-  CHAPTERS.technical.forEach((entry, i) => {
-    const item = document.createElement('div');
-    item.className = 'journey-horiz-item';
-    item.style.width = slotW + 'px';
-    item.innerHTML = i === VIDEO_IDX ? '' : `<div class="journey-item-text">${entry.text}</div>`;
-    horizTechRibbon.appendChild(item);
-  });
-
-  // Build pers ribbon
-  CHAPTERS.personal.forEach((entry, i) => {
-    const item = document.createElement('div');
-    item.className = 'journey-horiz-item';
-    item.style.width = slotW + 'px';
-    item.innerHTML = i === VIDEO_IDX ? '' : `<div class="journey-item-text">${entry.text}</div>`;
-    horizPersRibbon.appendChild(item);
-  });
-
-  // Build slots (dots)
-  for (let i = 0; i < TOTAL; i++) {
-    const slot = document.createElement('div');
-    slot.className = 'journey-horiz-slot';
-    slot.style.width = slotW + 'px';
-    const icon = CHAPTER_ICONS[i];
-    slot.innerHTML = `
-      <div class="journey-horiz-chapter">${CHAPTERS.technical[i].chapter}</div>
-      <div class="journey-dot">
-        ${icon ? `<img src="${icon}" class="journey-dot-icon" alt="" />` : ''}
-      </div>`;
-    horizSlotsRibbon.appendChild(slot);
-  }
-
-  // Line spans from center-of-first to center-of-last dot
-  horizLine.style.left  = (slotW / 2) + 'px';
-  horizLine.style.width = (slotW * (TOTAL - 1)) + 'px';
-
-  // Video overlay
-  const vid = document.createElement('video');
-  vid.id = 'journey-video-horiz';
-  vid.className = 'journey-video';
-  vid.muted = true; vid.loop = true; vid.playsInline = true;
-  vid.innerHTML = `<source src="${VIDEO_URL}" type="video/mp4" />`;
-  journeyEl.appendChild(vid);
-
-  vid.addEventListener('click', () => {
-    lightbox.classList.add('open');
-    lightboxVid.currentTime = 0;
-    lightboxVid.play();
-  });
-}
-
-function applyStateHoriz() {
-  const slotW  = window.innerWidth;
-  const offset = -idx * slotW;
-  horizTechRibbon.style.transform  = `translateX(${offset}px)`;
-  horizPersRibbon.style.transform  = `translateX(${offset}px)`;
-  horizSlotsRibbon.style.transform = `translateX(${offset}px)`;
-
-  horizTitle.textContent = CHAPTERS.technical[idx].chapter;
-
-  horizTechRibbon.querySelectorAll('.journey-horiz-item').forEach((item, i) => {
-    const dist = i - idx;
-    item.classList.toggle('active', dist === 0);
-    item.style.opacity = dist < 0 ? '0' : dist === 0 ? '1' : dist === 1 ? '0.3' : '0.1';
-  });
-  horizPersRibbon.querySelectorAll('.journey-horiz-item').forEach((item, i) => {
-    const dist = i - idx;
-    item.classList.toggle('active', dist === 0);
-    item.style.opacity = dist < 0 ? '0' : dist === 0 ? '1' : dist === 1 ? '0.3' : '0.1';
-  });
-
-  const SLIDE_MS = 550;
-  pastTimers.forEach(t => clearTimeout(t));
-  pastTimers = [];
-
-  horizSlotsRibbon.querySelectorAll('.journey-horiz-slot').forEach((slot, i) => {
-    const dist = i - idx;
-    const dot  = slot.querySelector('.journey-dot');
-    dot.classList.remove('past');
-    dot.classList.toggle('active', dist === 0);
-    slot.style.opacity = '1';
-    if (dist < 0) pastTimers.push(setTimeout(() => dot.classList.add('past'), SLIDE_MS));
-  });
-
-  const vid = document.getElementById('journey-video-horiz');
-  if (vid) {
-    const isVideo = idx === VIDEO_IDX;
-    vid.classList.toggle('visible', isVideo);
-    if (isVideo) vid.play(); else vid.pause();
-  }
-}
-
-// ── Unified navigate + init ───────────────────────────────────────────────
-function navigate(dir) {
-  const newIdx = idx + dir;
-  if (newIdx < 0 || newIdx >= TOTAL) return;
-  idx = newIdx;
-  IS_MOBILE() ? applyStateHoriz() : applyStateDesktop();
-}
-
-upBtn.addEventListener('click',   () => navigate(-1));
-downBtn.addEventListener('click', () => navigate(1));
+upBtn.addEventListener('click',   () => { if (idx > 0)         { idx--; applyState(); } });
+downBtn.addEventListener('click', () => { if (idx < TOTAL - 1) { idx++; applyState(); } });
 
 document.addEventListener('keydown', (e) => {
-  if (['ArrowUp','ArrowDown'].includes(e.key)) e.preventDefault();
-  if (e.key === 'ArrowUp')   navigate(-1);
-  if (e.key === 'ArrowDown') navigate(1);
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+  if (e.key === 'ArrowUp'   && idx > 0)         { idx--; applyState(); }
+  if (e.key === 'ArrowDown' && idx < TOTAL - 1) { idx++; applyState(); }
 });
 
-// Touch: vertical swipe on desktop layout, horizontal on mobile
-let touchStartX = 0, touchStartY = 0;
+// Swipe gesture support
+let touchStartY = 0;
 document.addEventListener('touchstart', (e) => {
-  touchStartX = e.touches[0].clientX;
   touchStartY = e.touches[0].clientY;
 }, { passive: true });
 document.addEventListener('touchend', (e) => {
-  const dx = touchStartX - e.changedTouches[0].clientX;
   const dy = touchStartY - e.changedTouches[0].clientY;
-  if (IS_MOBILE()) {
-    if (Math.abs(dx) < 40) return;
-    navigate(dx > 0 ? 1 : -1); // swipe left → next, swipe right → prev
-  } else {
-    if (Math.abs(dy) < 40) return;
-    navigate(dy > 0 ? 1 : -1);
-  }
+  if (Math.abs(dy) < 40) return; // ignore small taps
+  if (dy > 0 && idx < TOTAL - 1) { idx++; applyState(); } // swipe up → next
+  if (dy < 0 && idx > 0)         { idx--; applyState(); } // swipe down → prev
 }, { passive: true });
 
-// Init
-if (IS_MOBILE()) {
-  buildHoriz();
-  applyStateHoriz();
-} else {
-  buildCol(techCol, 'technical');
-  buildCol(persCol, 'personal');
-  buildCenter();
-  requestAnimationFrame(() => { measureHeights(); applyStateDesktop(); });
-}
+buildCol(techCol, 'technical');
+buildCol(persCol, 'personal');
+buildCenter();
+// measure after DOM is painted so scrollHeight is accurate
+requestAnimationFrame(() => { measureHeights(); applyState(); });
 
 </script>
 {% endblock %}
