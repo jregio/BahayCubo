@@ -202,16 +202,17 @@ function setViewport() {
   const maxH = Math.max(...textHeights);
   const natural = maxH * 2;
 
-  // On small screens, cap so the line + buttons stay within the viewport.
-  // Reserve space for: nav (~80px), hero (~180px), headers+btn (~80px), bottom btn (~50px)
-  const isMobile = window.innerWidth <= 700;
-  const maxAllowed = isMobile
-    ? window.innerHeight - 80 - 180 - 80 - 50
-    : Infinity;
+  // Measure actual space between the journey top and the bottom of the viewport,
+  // then subtract the down-button height so it stays visible.
+  const journeyEl  = document.querySelector('.journey');
+  const downBtnRow = downBtn.closest('.journey-btn-row');
+  const journeyTop = journeyEl.getBoundingClientRect().top;
+  const btnH       = downBtnRow ? downBtnRow.offsetHeight + 8 : 50;
+  const maxAllowed = window.innerHeight - journeyTop - btnH;
 
-  const viewH = Math.min(natural, maxAllowed);
+  const viewH = Math.min(natural, Math.max(maxAllowed, 80));
 
-  document.querySelector('.journey').style.height      = viewH + 'px';
+  journeyEl.style.height                              = viewH + 'px';
   document.querySelector('.journey-line').style.height = viewH + 'px';
 }
 
