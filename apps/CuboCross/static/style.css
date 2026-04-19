@@ -1254,6 +1254,7 @@ kbd {
     overflow-x: visible;
   }
   .viz-btn { flex: 0 0 auto; font-size: 0.82rem; padding: 5px 8px; }
+  .viz-kbd { display: none; }
 
   /* ── Cube card: shared mobile styles ── */
   .cube-card {
