@@ -121,26 +121,31 @@
               <button class="viz-btn active" data-viz="cross">
                 <span class="viz-dot viz-dot-cross"></span>
                 Cross
+                <span class="viz-kbd" aria-hidden="true"><kbd>1</kbd></span>
               </button>
               <button class="viz-btn" data-viz="red_blue">
                 <span class="viz-dot" style="background:#1565c0"></span>
                 <span class="viz-dot" style="background:#c62828"></span>
                 <span class="viz-slot">BR</span>
+                <span class="viz-kbd" aria-hidden="true"><kbd>2</kbd></span>
               </button>
               <button class="viz-btn" data-viz="red_green">
                 <span class="viz-dot" style="background:#c62828"></span>
                 <span class="viz-dot" style="background:#2e7d32"></span>
                 <span class="viz-slot">RG</span>
+                <span class="viz-kbd" aria-hidden="true"><kbd>3</kbd></span>
               </button>
               <button class="viz-btn" data-viz="orange_green">
                 <span class="viz-dot" style="background:#2e7d32"></span>
                 <span class="viz-dot" style="background:#ef6c00"></span>
                 <span class="viz-slot">GO</span>
+                <span class="viz-kbd" aria-hidden="true"><kbd>4</kbd></span>
               </button>
               <button class="viz-btn" data-viz="orange_blue">
                 <span class="viz-dot" style="background:#ef6c00"></span>
                 <span class="viz-dot" style="background:#1565c0"></span>
                 <span class="viz-slot">OB</span>
+                <span class="viz-kbd" aria-hidden="true"><kbd>5</kbd></span>
               </button>
 
             </div>
@@ -198,6 +203,7 @@
               <div class="ctrl-hint-row"><kbd>E</kbd><kbd>R</kbd><span>Roll ↺ ↻</span></div>
               <div class="ctrl-hint-row"><kbd>Space</kbd><span>Reset view</span></div>
               <div class="ctrl-hint-row"><kbd>Drag</kbd><span>Free rotate</span></div>
+              <div class="ctrl-hint-row"><kbd>Enter</kbd><span>Reveal / hide</span></div>
             </div>
           </div>
 
@@ -782,6 +788,17 @@ document.addEventListener('keydown', e => {
     case ' ':          e.preventDefault(); resetRot(); break;
     case 'e': case 'E': rotateLocal(matRotZ(-90)); applyCubeTransform(); break;
     case 'r': case 'R': rotateLocal(matRotZ( 90)); applyCubeTransform(); break;
+    case '1': setViz(SOL_KEYS[0]); break;
+    case '2': setViz(SOL_KEYS[1]); break;
+    case '3': setViz(SOL_KEYS[2]); break;
+    case '4': setViz(SOL_KEYS[3]); break;
+    case '5': setViz(SOL_KEYS[4]); break;
+    case 'Enter': {
+      e.preventDefault();
+      const btn = document.getElementById(`reveal-${currentViz}`);
+      if (btn) toggleReveal(btn);
+      break;
+    }
   }
 });
 
@@ -862,15 +879,22 @@ function populateSolBoxes(results) {
   }
 }
 
-/* ─── Reveal buttons ─────────────────────────────────────────── */
-document.querySelectorAll('.reveal-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (btn.classList.contains('revealed')) return;
+/* ─── Reveal buttons (toggleable) ───────────────────────────── */
+function toggleReveal(btn) {
+  if (btn.disabled) return;
+  if (btn.classList.contains('revealed')) {
+    btn.classList.remove('revealed');
+    btn.textContent = 'Reveal';
+  } else {
     const sol = btn.dataset.solution || '';
     btn.classList.add('revealed');
     btn.innerHTML =
       `<span class="sol-moves-inline">${renderMoves(sol, MV_SOLUTION)}</span>`;
-  });
+  }
+}
+
+document.querySelectorAll('.reveal-btn').forEach(btn => {
+  btn.addEventListener('click', () => toggleReveal(btn));
 });
 
 /* ─── Display a history entry ────────────────────────────────── */

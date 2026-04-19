@@ -440,6 +440,20 @@ body {
   cursor: pointer;
   transition: background 0.12s, border-color 0.12s, color 0.12s;
   text-align: left;
+  box-sizing: border-box;
+}
+@media (min-width: 900px) {
+  .viz-btn { width: 100%; }
+}
+.viz-kbd {
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+.viz-kbd kbd {
+  font-size: 0.68rem;
+  padding: 0 4px;
+  line-height: 1.4;
 }
 .viz-btn:hover { background: var(--surface-2); border-color: var(--border-hi); color: var(--text); }
 .viz-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--text); }
