@@ -221,7 +221,7 @@ body {
 .contact-list {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 1rem;
   margin-top: 0.25rem;
   max-width: 100%;
 }
