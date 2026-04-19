@@ -558,7 +558,56 @@ body.aboutme-page {
   opacity: 1;
 }
 
-/* ── Mobile (iPhone and small screens) ──────────────────────────────────── */
+/* ── Mobile landscape ───────────────────────────────────────────────────── */
+@media (max-height: 500px) and (orientation: landscape) {
+
+  .site-nav {
+    padding: 0.5rem 1.5rem 1rem;
+    position: sticky;
+  }
+
+  .site-nav a {
+    font-size: 10pt;
+  }
+
+  .page-content {
+    padding: 0.5rem 2rem 2rem;
+  }
+
+  /* Landing */
+  .landing-hero { padding-top: 0.5rem; }
+  .landing-logo { max-width: 120px; }
+  .landing-tagline-1 { font-size: 16pt; }
+  .landing-tagline-2 { font-size: 12pt; }
+  .landing-about { margin-top: 1.5rem; gap: 2rem; }
+  .landing-about-img-wrap { flex: 0 0 120px; }
+
+  /* Contact */
+  .contact-row { padding: 0.85rem 1.25rem; gap: 1rem; }
+  .contact-icon { width: 32px; height: 32px; }
+  .contact-row p { font-size: 13pt; }
+  .contact-row p.contact-coffee { font-size: 11pt; }
+
+  /* About me — make hero compact so journey fits */
+  body.aboutme-page { overflow: hidden; height: 100dvh; }
+  .about-hero { gap: 0.35rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .about-profile { width: 64px; height: 64px; }
+  .about-greeting { font-size: 13pt; max-width: 55vw; text-align: left; }
+  .about-prompt { font-size: 11pt; width: 100%; text-align: center; }
+  .journey-wrap { margin-top: 0.75rem; }
+  .journey-header { font-size: 8pt; }
+  .journey-chapter-title { font-size: 11pt; }
+  .journey-item-text { font-size: 11pt; }
+  .journey-item.active .journey-item-text { font-size: 12pt; }
+
+  /* Webapps */
+  .webapp-card { gap: 1rem; }
+  .webapp-screenshot { width: 220px; }
+  .webapp-title { font-size: 16pt; }
+  .webapp-desc { font-size: 11pt; }
+}
+
+/* ── Mobile portrait (iPhone and small screens) ──────────────────────────── */
 @media (max-width: 700px) {
 
   .site-nav {
@@ -632,6 +681,7 @@ body.aboutme-page {
     font-size: 10pt;
   }
 
+  /* ── Webapps ── */
   .webapp-card {
     flex-direction: column;
     align-items: flex-start;
@@ -649,5 +699,90 @@ body.aboutme-page {
 
   .webapp-desc {
     font-size: 12pt;
+  }
+
+  /* ── Contact ── */
+  .contact-list {
+    gap: 0;
+  }
+
+  .contact-row {
+    gap: 1.25rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .contact-icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .contact-row p {
+    font-size: 16pt;
+  }
+
+  .contact-row p.contact-coffee {
+    font-size: 13pt;
+  }
+
+  .contact-halohalo {
+    width: 110px;
+    right: 0.75rem;
+  }
+
+  /* ── About Me ── */
+  .about-profile {
+    width: 110px;
+    height: 110px;
+  }
+
+  .about-greeting {
+    font-size: 17pt;
+  }
+
+  .about-prompt {
+    font-size: 14pt;
+  }
+
+  :root {
+    --journey-center: 72px;
+  }
+
+  .journey-headers {
+    gap: 0.5rem;
+  }
+
+  .journey-header {
+    font-size: 9pt;
+  }
+
+  .journey-chapter-title {
+    font-size: 13pt;
+  }
+
+  .journey-item-text {
+    font-size: 12pt;
+  }
+
+  .journey-item.active .journey-item-text {
+    font-size: 14pt;
+  }
+
+  .journey-dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .journey-dot.active {
+    width: 36px;
+    height: 36px;
+  }
+
+  .journey-video {
+    max-width: 130px;
+  }
+
+  .video-lightbox video {
+    width: 95vw;
   }
 }

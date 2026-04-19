@@ -163,7 +163,8 @@ function measureHeights() {
   const techItems = techCol.querySelectorAll('.journey-item');
   const persItems = persCol.querySelectorAll('.journey-item');
   const slots     = slotsEl.querySelectorAll('.journey-slot');
-  const DOT_SIZE  = 16; // inactive dot size (matches CSS)
+  const firstDot2 = slotsEl.querySelector('.journey-dot');
+  const DOT_SIZE  = firstDot2 ? firstDot2.offsetWidth : 16;
 
   for (let i = 0; i < TOTAL; i++) {
     techItems[i].style.height = 'auto';
@@ -223,8 +224,10 @@ function applyState() {
   });
 
   const PAD_TOP      = 8;
-  const DOT_INACTIVE = 16;
-  const DOT_ACTIVE   = 54;
+  // Read actual rendered dot size so mobile CSS overrides are respected
+  const firstDot     = slotsEl.querySelector('.journey-dot');
+  const DOT_INACTIVE = firstDot ? firstDot.offsetWidth : 16;
+  const DOT_ACTIVE   = DOT_INACTIVE * 3.375; // matches active scale ratio (54/16)
   const SLIDE_MS     = 550; // matches CSS transition duration
 
   // Cancel any pending .past timers before re-evaluating
