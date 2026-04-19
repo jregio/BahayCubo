@@ -211,6 +211,14 @@ body {
 }
 
 /* ── Contact page ────────────────────────────────────────────────────────── */
+.contact-intro {
+  font-size: 22pt;
+  font-weight: 300;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
 .contact-list {
   display: flex;
   flex-direction: column;
@@ -247,6 +255,8 @@ body {
   width: 64px;
   height: 64px;
   flex-shrink: 0;
+  image-rendering: crisp-edges;
+  transform: translateZ(0); /* force GPU layer, prevents blur */
   transition: filter 0.2s ease, transform 0.2s ease;
 }
 
