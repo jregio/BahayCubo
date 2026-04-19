@@ -223,7 +223,7 @@ body {
 .contact-list {
   display: flex;
   flex-direction: column;
-  gap: 0.90rem;
+  gap: 0.80rem;
   max-width: 100%;
 }
 
