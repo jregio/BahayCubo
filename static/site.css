@@ -464,8 +464,7 @@ body.aboutme-page {
 /* height set by JS per slot */
 .journey-item {
   display: flex;
-  align-items: flex-start;
-  padding-top: 0.5rem;
+  align-items: center;
   transition: opacity 0.55s ease;
 }
 

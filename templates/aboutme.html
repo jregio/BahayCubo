@@ -165,43 +165,36 @@ function measureHeights() {
   const persItems = persCol.querySelectorAll('.journey-item');
   const slots     = slotsEl.querySelectorAll('.journey-slot');
 
-  // Read actual dot size and item padding-top from the live DOM
-  const firstDot  = slotsEl.querySelector('.journey-dot');
-  const DOT_SIZE  = firstDot ? firstDot.offsetWidth : 16;
-  const firstItem = techItems[0];
-  itemPadTop = firstItem
-    ? parseInt(getComputedStyle(firstItem).paddingTop) || 0
-    : 0;
+  const firstDot = slotsEl.querySelector('.journey-dot');
+  const DOT_SIZE = firstDot ? firstDot.offsetWidth : 16;
 
-  // Pass 1: measure natural text heights with items unconstrained
-  const textHeights = [];
+  // Pass 1: unconstrain all items and force reflow
   for (let i = 0; i < TOTAL; i++) {
     techItems[i].style.height = 'auto';
     persItems[i].style.height = 'auto';
+    slots[i].style.height     = 'auto';
   }
-  // Force reflow so scrollHeight is accurate
-  void techItems[0].offsetHeight;
+  void techItems[0].offsetHeight; // force reflow
 
+  // Pass 2: measure natural content height
   for (let i = 0; i < TOTAL; i++) {
-    const textH = (i === VIDEO_IDX)
+    const contentH = (i === VIDEO_IDX)
       ? 260
       : Math.max(techItems[i].scrollHeight, persItems[i].scrollHeight);
-    textHeights.push(textH);
-    heights.push(textH + PAD_PX);
+    heights.push(contentH + PAD_PX);
   }
 
-  // Pass 2: apply fixed heights
+  // Pass 3: apply fixed heights
   for (let i = 0; i < TOTAL; i++) {
     techItems[i].style.height = heights[i] + 'px';
     persItems[i].style.height = heights[i] + 'px';
     slots[i].style.height     = heights[i] + 'px';
   }
 
-  // Pass 3: set dot margins after heights are locked
+  // Pass 4: center each dot within its slot height
   for (let i = 0; i < TOTAL; i++) {
-    const dotMargin = itemPadTop + (textHeights[i] / 2) - (DOT_SIZE / 2);
     const dot = slots[i].querySelector('.journey-dot');
-    dot.style.marginTop = Math.max(0, dotMargin) + 'px';
+    dot.style.marginTop = Math.max(0, (heights[i] / 2) - (DOT_SIZE / 2)) + 'px';
   }
 
   setViewport();
@@ -266,11 +259,9 @@ function applyState() {
     dot.classList.toggle('active', dist === 0);
     slot.style.opacity = '1';
 
-    // Re-center dot for its new size using the same PAD_TOP as measureHeights
-    const textH   = heights[i] - PAD_PX;
+    // Re-center dot within its slot for its current size
     const dotSize = dist === 0 ? DOT_ACTIVE : DOT_INACTIVE;
-    const margin  = itemPadTop + (textH / 2) - (dotSize / 2);
-    dot.style.marginTop = Math.max(0, margin) + 'px';
+    dot.style.marginTop = Math.max(0, (heights[i] / 2) - (dotSize / 2)) + 'px';
 
     // Hide past dots only after the slide finishes
     if (dist < 0) {
