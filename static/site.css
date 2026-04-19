@@ -212,9 +212,11 @@ body {
 
 /* ── Contact page ────────────────────────────────────────────────────────── */
 .contact-intro {
-  font-size: 22pt;
-  font-weight: 400;
+  font-size: 14pt;
+  font-weight: 300;
+  font-style: italic;
   text-align: center;
+  color: #888;
   margin-bottom: 1rem;
 }
 
