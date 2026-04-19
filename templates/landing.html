@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 {% set active_page = "home" %}
 
-{% block title %}BahayCubo{% endblock %}
+{% block title %}Bahay Cubo - a home for all cubers{% endblock %}
+
+{% block meta %}
+<meta property="og:title" content="Bahay Cubo - a home for all cubers">
+<meta property="og:description" content="Just come in, train, and leave when you're done. Or stay and be a part of something.">
+<meta property="og:url" content="https://bahaycubo.io">
+<meta name="twitter:title" content="Bahay Cubo - a home for all cubers">
+<meta name="twitter:description" content="Just come in, train, and leave when you're done. Or stay and be a part of something.">
+{% endblock %}
 
 {% block content %}
 <div class="landing-hero">

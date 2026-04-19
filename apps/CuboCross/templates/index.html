@@ -1,16 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cubo Cross</title>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.svg') }}?v={{ static_v.favicon }}" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="{{ url_for('cubocross.static', filename='style.css') }}?v={{ static_v.css }}" />
-</head>
-<body>
+{% extends "base.html" %}
 
+{% block meta %}
+<meta property="og:title" content="Cubo Cross - cross and XCross trainer">
+<meta property="og:description" content="Optimal IDA* solutions for cross and all 4 XCross pairs. 3D scramble visualizer, F2L pair selector, and scramble history.">
+<meta property="og:url" content="https://bahaycubo.io/cubocross">
+<meta name="twitter:title" content="Cubo Cross - cross and XCross trainer">
+<meta name="twitter:description" content="Optimal IDA* solutions for cross and all 4 XCross pairs. 3D scramble visualizer, F2L pair selector, and scramble history.">
+{% endblock %}
+
+{% block title %}Cubo Cross - cross and XCross trainer{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('cubocross.static', filename='style.css') }}?v={{ static_v.css }}" />
+{% endblock %}
+
+{% block body_class %}cubocross{% endblock %}
+
+{% block content %}
 <!-- ── Loading screen ────────────────────────────────────────────── -->
 <div id="loading-screen" class="loading-screen">
   <div class="loading-title">Cubo Cross</div>
@@ -309,6 +315,9 @@
 
 </div><!-- #app-wrap -->
 
+{% endblock %}
+
+{% block scripts %}
 <script>
 /* ═══════════════════════════════════════════════════════════════
    Scramble-button cube — static 3D CSS cube with 6 solid faces.
@@ -1359,5 +1368,4 @@ setViz('cross');
 renderHistory(viewDate);
 startWarmup();
 </script>
-</body>
-</html>
+{% endblock %}
