@@ -539,6 +539,13 @@ document.querySelectorAll('.viz-btn').forEach(btn => {
   btn.addEventListener('click', () => setViz(btn.dataset.viz));
 });
 
+document.querySelectorAll('.sol-box').forEach(box => {
+  box.addEventListener('click', () => {
+    const key = box.dataset.key;
+    if (key) setViz(key);
+  });
+});
+
 /* ─── Cube rotation ──────────────────────────────────────────── */
 /* ─── Rotation matrix ────────────────────────────────────────────
    We store orientation as a 3×3 column-major rotation matrix so that

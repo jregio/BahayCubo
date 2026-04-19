@@ -720,6 +720,7 @@ kbd {
   justify-content: space-between;  /* spread icon/label/htm/button evenly */
   gap: 0.5rem;
   transition: border-color 0.18s, box-shadow 0.18s;
+  cursor: pointer;
 }
 .sol-box:hover { border-color: var(--border-hi); }
 .sol-box.active {
