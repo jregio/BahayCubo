@@ -203,14 +203,11 @@ function measureHeights() {
     slots[i].style.height     = heights[i] + 'px';
   }
 
-  // Center dot vertically with the taller column's text block
-  // Items are top-aligned with padding-top; dot center = padTop + tallerTextH/2
-  const PAD_TOP = parseInt(getComputedStyle(techItems[0]).paddingTop) || 0;
+  // Center dot at the vertical midpoint of the slot
   const firstDot = slots[0].querySelector('.journey-dot');
   const DOT_SIZE = firstDot ? firstDot.offsetWidth : 16;
   for (let i = 0; i < TOTAL; i++) {
-    const tallerH  = Math.max(techHeights[i], persHeights[i]);
-    const dotMargin = PAD_TOP + (tallerH / 2) - (DOT_SIZE / 2);
+    const dotMargin = (heights[i] / 2) - (DOT_SIZE / 2);
     slots[i].querySelector('.journey-dot').style.marginTop = Math.max(0, dotMargin) + 'px';
   }
 
