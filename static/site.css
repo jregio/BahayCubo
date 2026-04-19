@@ -213,16 +213,16 @@ body {
 /* ── Contact page ────────────────────────────────────────────────────────── */
 .contact-intro {
   font-size: 22pt;
-  font-weight: 300;
-  font-style: italic;
+  font-weight: 400;
+  text-align: center;
   color: #555;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .contact-list {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.25rem;
   margin-top: 0.25rem;
   max-width: 100%;
 }
