@@ -43,18 +43,24 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
+  {% if show_nav != false %}
   <nav class="site-nav">
     <ul>
-      <li><a href="{{ url_for('landing') }}" class="{{ 'active' if active_page == 'home'    }}">Bahay Cubo</a></li>
+      <li><a href="{{ url_for('landing') }}" class="{{ 'active' if active_page == 'home' }}">Bahay Cubo</a></li>
       <li><a href="{{ url_for('webapps') }}" class="{{ 'active' if active_page == 'webapps' }}">Webapps</a></li>
       <li><a href="{{ url_for('aboutme') }}" class="{{ 'active' if active_page == 'aboutme' }}">About me</a></li>
       <li><a href="{{ url_for('contact') }}" class="{{ 'active' if active_page == 'contact' }}">Contact me</a></li>
     </ul>
   </nav>
+  {% endif %}
 
+  {% if show_nav != false %}
   <main class="page-content">
+  {% endif %}
     {% block content %}{% endblock %}
+  {% if show_nav != false %}
   </main>
+  {% endif %}
 
   {% block scripts %}{% endblock %}
 
