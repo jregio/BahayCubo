@@ -507,6 +507,11 @@ body.aboutme-page {
   width: 4px;
   background: #1a1a1a;
   transform: translateX(-2px);
+  transition: opacity 0.55s ease;
+}
+
+.journey-line.fading {
+  opacity: 0;
 }
 
 /* Single slots ribbon: label above dot */
@@ -759,11 +764,11 @@ body.aboutme-page {
   }
 
   .about-greeting {
-    font-size: 17pt;
+    font-size: 13pt;
   }
 
   .about-prompt {
-    font-size: 14pt;
+    font-size: 11pt;
   }
 
   :root {

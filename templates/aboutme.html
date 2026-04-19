@@ -264,9 +264,10 @@ function applyState() {
 
   chapterTitle.textContent = CHAPTERS.technical[idx].chapter;
 
-  // Show video overlay on last chapter
+  // Show video overlay on last chapter, fade the line away
   const isVideo = idx === VIDEO_IDX;
   videoEl.classList.toggle('visible', isVideo);
+  document.querySelector('.journey-line').classList.toggle('fading', isVideo);
   if (isVideo) videoEl.play(); else videoEl.pause();
 
   upBtn.disabled   = idx === 0;
