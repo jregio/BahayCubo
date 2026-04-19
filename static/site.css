@@ -457,6 +457,7 @@ body.aboutme-page {
   overflow: hidden;
   position: relative;
   z-index: 1;
+  padding-top: 2px; /* prevent first item from being clipped at the top */
   transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
@@ -758,17 +759,22 @@ body.aboutme-page {
     gap: 1.5rem;
   }
 
+  .about-hero {
+    gap: 0.4rem;
+    margin-top: 0;
+  }
+
   .about-profile {
-    width: 110px;
-    height: 110px;
+    width: 130px;
+    height: 130px;
   }
 
   .about-greeting {
-    font-size: 14pt;
+    font-size: 13pt;
   }
 
   .about-prompt {
-    font-size: 13pt;
+    font-size: 11pt;
   }
 
   :root {
@@ -776,7 +782,7 @@ body.aboutme-page {
   }
 
   .journey-wrap {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
   }
 
   .journey-headers {
