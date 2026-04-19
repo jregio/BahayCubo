@@ -177,23 +177,41 @@ function measureHeights() {
   }
   void techCol.offsetHeight; // force reflow
 
-  // Measure natural content height
+  // Measure each column's content height separately
+  const techHeights = [];
+  const persHeights = [];
   for (let i = 0; i < TOTAL; i++) {
-    const contentH = (i === VIDEO_IDX)
-      ? 260
-      : Math.max(techItems[i].scrollHeight, persItems[i].scrollHeight);
-    heights.push(contentH + PAD_PX);
+    if (i === VIDEO_IDX) {
+      techHeights.push(260);
+      persHeights.push(260);
+    } else {
+      techHeights.push(techItems[i].scrollHeight);
+      persHeights.push(persItems[i].scrollHeight);
+    }
+    // Slot height = taller column + breathing room
+    heights.push(Math.max(techHeights[i], persHeights[i]) + PAD_PX);
   }
 
   // Restore overflow
   techCol.style.overflow = '';
   persCol.style.overflow = '';
 
-  // Apply fixed heights — dots are centered via CSS flex, no marginTop needed
+  // Apply fixed heights
   for (let i = 0; i < TOTAL; i++) {
     techItems[i].style.height = heights[i] + 'px';
     persItems[i].style.height = heights[i] + 'px';
     slots[i].style.height     = heights[i] + 'px';
+  }
+
+  // Center dot vertically with the taller column's text block
+  // Items are top-aligned with padding-top; dot center = padTop + tallerTextH/2
+  const PAD_TOP = parseInt(getComputedStyle(techItems[0]).paddingTop) || 0;
+  const firstDot = slots[0].querySelector('.journey-dot');
+  const DOT_SIZE = firstDot ? firstDot.offsetWidth : 16;
+  for (let i = 0; i < TOTAL; i++) {
+    const tallerH  = Math.max(techHeights[i], persHeights[i]);
+    const dotMargin = PAD_TOP + (tallerH / 2) - (DOT_SIZE / 2);
+    slots[i].querySelector('.journey-dot').style.marginTop = Math.max(0, dotMargin) + 'px';
   }
 
   setViewport();

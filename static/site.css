@@ -314,13 +314,11 @@ body.aboutme-page {
   font-size: 24pt;
   font-weight: 400;
   max-width: 1000px;
-  margin: 0;
 }
 
 .about-prompt {
   font-size: 20pt;
   font-weight: 300;
-  margin: 0;
   font-style: italic;
   color: #555;
 }
@@ -459,7 +457,6 @@ body.aboutme-page {
   overflow: hidden;
   position: relative;
   z-index: 1;
-  padding-top: 2px; /* prevent first item from being clipped at the top */
   transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
@@ -467,7 +464,8 @@ body.aboutme-page {
 /* height set by JS per slot */
 .journey-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  padding-top: 0.5rem;
   transition: opacity 0.55s ease;
 }
 
@@ -634,11 +632,7 @@ body.aboutme-page {
 @media (max-width: 700px) {
 
   .site-nav {
-    padding: 1rem 1rem 1rem 1rem;
-  }
-
-  body.aboutme-page .site-nav {
-    padding-bottom: 0.5rem;
+    padding: 1.5rem 1rem 0.75rem 1rem;
   }
 
   .site-nav ul {
@@ -653,10 +647,6 @@ body.aboutme-page {
 
   .page-content {
     padding: 1rem 1.25rem 3rem;
-  }
-
-  body.aboutme-page .page-content {
-    padding-top: 0.25rem;
   }
 
   .landing-hero {
@@ -769,23 +759,17 @@ body.aboutme-page {
     gap: 1.5rem;
   }
 
-  .about-hero {
-    gap: 0.2rem;
-    margin-top: 0;
-  }
-
   .about-profile {
-    width: 130px;
-    height: 130px;
+    width: 140px;
+    height: 140px;
   }
 
   .about-greeting {
-    font-size: 13pt;
+    font-size: 14pt;
   }
 
   .about-prompt {
-    font-size: 11pt;
-    margin-bottom: 0;
+    font-size: 13pt;
   }
 
   :root {
@@ -793,7 +777,7 @@ body.aboutme-page {
   }
 
   .journey-wrap {
-    margin-top: 0.25rem;
+    margin-top: 1rem;
   }
 
   .journey-headers {
