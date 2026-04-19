@@ -9,7 +9,8 @@
 <div class="about-hero">
   <img src="{{ url_for('static', filename='images/profile.webp') }}" alt="Jose" class="about-profile" />
   <p class="about-greeting">Hi! I'm Jose. Thanks for being interested about me.</p>
-  <p class="about-prompt">Press up/down keys or click the buttons below to read through my story.</p>
+  <p class="about-prompt desktop-prompt">Press ↑↓ keys or click the buttons to read through my story.</p>
+  <p class="about-prompt touch-prompt">Swipe up/down or tap the buttons to read through my story.</p>
 </div>
 
 <div class="journey-wrap">
@@ -90,7 +91,8 @@ const CHAPTERS = {
 };
 
 const TOTAL  = CHAPTERS.technical.length;
-const PAD_PX = 48; // breathing room per slot
+// Less padding on touch/mobile since slots need to fit in a short viewport
+const PAD_PX = window.matchMedia('(max-width: 700px)').matches ? 24 : 48;
 
 let idx     = 0;
 let heights = []; // computed per-slot heights
@@ -274,6 +276,18 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowUp'   && idx > 0)         { idx--; applyState(); }
   if (e.key === 'ArrowDown' && idx < TOTAL - 1) { idx++; applyState(); }
 });
+
+// Swipe gesture support
+let touchStartY = 0;
+document.addEventListener('touchstart', (e) => {
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+document.addEventListener('touchend', (e) => {
+  const dy = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(dy) < 40) return; // ignore small taps
+  if (dy > 0 && idx < TOTAL - 1) { idx++; applyState(); } // swipe up → next
+  if (dy < 0 && idx > 0)         { idx--; applyState(); } // swipe down → prev
+}, { passive: true });
 
 buildCol(techCol, 'technical');
 buildCol(persCol, 'personal');

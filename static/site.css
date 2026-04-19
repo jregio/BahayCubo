@@ -287,6 +287,9 @@ body {
 }
 
 /* ── About me page ───────────────────────────────────────────────────────── */
+.touch-prompt   { display: none; }
+.desktop-prompt { display: block; }
+
 body.aboutme-page {
   overflow: hidden;
   height: 100dvh;
@@ -703,26 +706,26 @@ body.aboutme-page {
 
   /* ── Contact ── */
   .contact-list {
-    gap: 0;
+    gap: 0.5rem;
   }
 
   .contact-row {
-    gap: 1.25rem;
-    padding: 1.5rem 1rem;
+    gap: 1.5rem;
+    padding: 2rem 1.25rem;
   }
 
   .contact-icon {
-    width: 40px;
-    height: 40px;
+    width: 52px;
+    height: 52px;
     flex-shrink: 0;
   }
 
   .contact-row p {
-    font-size: 16pt;
+    font-size: 18pt;
   }
 
   .contact-row p.contact-coffee {
-    font-size: 13pt;
+    font-size: 14pt;
   }
 
   .contact-halohalo {
@@ -731,6 +734,9 @@ body.aboutme-page {
   }
 
   /* ── About Me ── */
+  .desktop-prompt { display: none; }
+  .touch-prompt   { display: block; }
+
   .about-profile {
     width: 110px;
     height: 110px;
@@ -744,8 +750,17 @@ body.aboutme-page {
     font-size: 14pt;
   }
 
+  /* Hide nav buttons — swipe handles navigation */
+  .journey-btn-row {
+    display: none;
+  }
+
   :root {
     --journey-center: 72px;
+  }
+
+  .journey-wrap {
+    margin-top: 1rem;
   }
 
   .journey-headers {
