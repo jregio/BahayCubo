@@ -165,18 +165,19 @@ function measureHeights() {
   const persItems = persCol.querySelectorAll('.journey-item');
   const slots     = slotsEl.querySelectorAll('.journey-slot');
 
-  const firstDot = slotsEl.querySelector('.journey-dot');
-  const DOT_SIZE = firstDot ? firstDot.offsetWidth : 16;
+  // Temporarily remove overflow:hidden so scrollHeight is accurate
+  techCol.style.overflow = 'visible';
+  persCol.style.overflow = 'visible';
 
-  // Pass 1: unconstrain all items and force reflow
+  // Unconstrain all items and force reflow
   for (let i = 0; i < TOTAL; i++) {
     techItems[i].style.height = 'auto';
     persItems[i].style.height = 'auto';
     slots[i].style.height     = 'auto';
   }
-  void techItems[0].offsetHeight; // force reflow
+  void techCol.offsetHeight; // force reflow
 
-  // Pass 2: measure natural content height
+  // Measure natural content height
   for (let i = 0; i < TOTAL; i++) {
     const contentH = (i === VIDEO_IDX)
       ? 260
@@ -184,17 +185,15 @@ function measureHeights() {
     heights.push(contentH + PAD_PX);
   }
 
-  // Pass 3: apply fixed heights
+  // Restore overflow
+  techCol.style.overflow = '';
+  persCol.style.overflow = '';
+
+  // Apply fixed heights — dots are centered via CSS flex, no marginTop needed
   for (let i = 0; i < TOTAL; i++) {
     techItems[i].style.height = heights[i] + 'px';
     persItems[i].style.height = heights[i] + 'px';
     slots[i].style.height     = heights[i] + 'px';
-  }
-
-  // Pass 4: center each dot within its slot height
-  for (let i = 0; i < TOTAL; i++) {
-    const dot = slots[i].querySelector('.journey-dot');
-    dot.style.marginTop = Math.max(0, (heights[i] / 2) - (DOT_SIZE / 2)) + 'px';
   }
 
   setViewport();
@@ -240,11 +239,7 @@ function applyState() {
     });
   });
 
-  // Read actual rendered dot size so mobile CSS overrides are respected
-  const firstDot     = slotsEl.querySelector('.journey-dot');
-  const DOT_INACTIVE = firstDot ? firstDot.offsetWidth : 16;
-  const DOT_ACTIVE   = DOT_INACTIVE * 3.375; // matches active scale ratio (54/16)
-  const SLIDE_MS     = 550; // matches CSS transition duration
+  const SLIDE_MS = 550; // matches CSS transition duration
 
   // Cancel any pending .past timers before re-evaluating
   pastTimers.forEach(t => clearTimeout(t));
@@ -259,9 +254,7 @@ function applyState() {
     dot.classList.toggle('active', dist === 0);
     slot.style.opacity = '1';
 
-    // Re-center dot within its slot for its current size
-    const dotSize = dist === 0 ? DOT_ACTIVE : DOT_INACTIVE;
-    dot.style.marginTop = Math.max(0, (heights[i] / 2) - (dotSize / 2)) + 'px';
+    // Dot centered in slot via CSS flex — no JS margin needed
 
     // Hide past dots only after the slide finishes
     if (dist < 0) {

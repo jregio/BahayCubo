@@ -525,7 +525,7 @@ body.aboutme-page {
 /* height set by JS per slot */
 .journey-slot {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   flex-shrink: 0;
   transition: opacity 0.55s ease;
