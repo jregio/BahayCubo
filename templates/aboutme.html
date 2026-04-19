@@ -224,7 +224,7 @@ function setViewport() {
   const journeyEl  = document.querySelector('.journey');
   const downBtnRow = downBtn.closest('.journey-btn-row');
   const journeyTop = journeyEl.getBoundingClientRect().top;
-  const btnH       = downBtnRow ? downBtnRow.offsetHeight : 40;
+  const btnH       = downBtnRow ? downBtnRow.offsetHeight + 16 : 56;
   const maxAllowed = window.innerHeight - journeyTop - btnH;
 
   const viewH = Math.min(natural, Math.max(maxAllowed, 80));
