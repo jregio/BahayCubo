@@ -89,8 +89,8 @@ const CHAPTERS = {
 };
 
 const TOTAL  = CHAPTERS.technical.length;
-// Less padding on touch/mobile since slots need to fit in a short viewport
-const PAD_PX = window.matchMedia('(max-width: 700px)').matches ? 24 : 48;
+// Breathing room between slots
+const PAD_PX = window.matchMedia('(max-width: 700px)').matches ? 48 : 64;
 
 let idx        = 0;
 let heights    = []; // computed per-slot heights
