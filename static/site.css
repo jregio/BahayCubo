@@ -487,10 +487,11 @@ body.aboutme-page {
   font-size: 18pt;
 }
 
-/* Center column */
+/* Center column — clip vertically so past dots slide away cleanly,
+   but allow horizontal bleed so active dot can overlap text columns */
 .journey-center {
   height: 100%;
-  overflow: hidden;
+  clip-path: inset(0 -100vw);
 }
 
 .journey-track {
@@ -750,7 +751,7 @@ body.aboutme-page {
   .touch-prompt   { display: block; }
 
   .journey {
-    gap: 0;
+    gap: 1.5rem;
   }
 
   .about-profile {
@@ -775,7 +776,7 @@ body.aboutme-page {
   }
 
   .journey-headers {
-    gap: 0;
+    gap: 1.5rem;
   }
 
   .journey-header {
