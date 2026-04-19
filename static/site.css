@@ -314,11 +314,13 @@ body.aboutme-page {
   font-size: 24pt;
   font-weight: 400;
   max-width: 1000px;
+  margin: 0;
 }
 
 .about-prompt {
   font-size: 20pt;
   font-weight: 300;
+  margin: 0;
   font-style: italic;
   color: #555;
 }
@@ -650,7 +652,7 @@ body.aboutme-page {
   }
 
   body.aboutme-page .page-content {
-    padding-top: 0rem;
+    padding-top: 0.25rem;
   }
 
   .landing-hero {
