@@ -75,39 +75,3 @@ python app.py
 Then open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
 
 > **First run note:** On startup the Cubo Cross solver builds binary pruning tables under `apps/CuboCross/tables/` (one per cross/xcross key). This takes a bit of time and disk space the first time, but subsequent runs load them from cache and are much faster.
-
----
-
-## Project structure
-
-```
-BahayCubo/
-├── app.py                      # Flask app — registers blueprint, root routes
-├── requirements.txt
-├── templates/                  # Root-level Jinja2 templates
-│   ├── base.html               # Shared layout (nav, fonts, head)
-│   ├── landing.html
-│   ├── webapps.html
-│   ├── aboutme.html
-│   └── contact.html
-├── static/                     # Root-level static assets
-│   ├── site.css                # Global stylesheet
-│   ├── favicon.svg
-│   ├── icons/                  # SVG icons (contact, location)
-│   ├── images/                 # WebP images (profile, app screenshots)
-│   ├── journey/                # SVG icons for the about me journey
-│   └── videos/                 # MP4 for the about me journey finale
-└── apps/
-    └── CuboCross/              # Cubo Cross Flask Blueprint
-        ├── __init__.py
-        ├── routes.py           # Blueprint routes and streaming endpoint
-        ├── cube.py             # Cube engine — facelets, moves, piece masks
-        ├── solver.py           # Pruning tables and IDA* solver
-        ├── scrambler.py        # WCA-style random scramble generator
-        ├── templates/
-        │   └── index.html      # Full UI + client-side JavaScript
-        ├── static/
-        │   └── style.css       # Cubo Cross stylesheet
-        └── tables/             # Auto-generated pruning tables (gitignored)
-```
-
