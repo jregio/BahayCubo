@@ -437,6 +437,7 @@ body {
 .sbtn-sticker {
   border-radius: 2px;
   background: #333;
+  position: relative;
 }
 
 .sbtn-f { transform: translateZ(30px); }
@@ -671,7 +672,7 @@ kbd {
 .hint-u { transform: scaleY(-1) rotateX(90deg) translateZ(calc(var(--cube-half) * -2)); }
 .hint-d { transform: rotateX(-90deg) translateZ(calc(var(--cube-half) * 2)); }
 
-.sticker { border-radius: 3px; transition: background 0.25s; }
+.sticker { border-radius: 3px; transition: background 0.25s; position: relative; }
 .sticker.hi { box-shadow: inset 0 1px 0 rgba(255,255,255,0.22); }
 
 /* ─── Z-rotation buttons ─────────────────────────────────────── */
@@ -1168,6 +1169,263 @@ kbd {
 
 /* ─── Utility ────────────────────────────────────────────────── */
 .hidden { display: none !important; }
+
+/* ═══════════════════════════════════════════════════════════════
+   ACCESSIBILITY MODES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Feature 1: Light mode ───────────────────────────────────── */
+body.theme-light {
+  --bg:          #f4ede0;
+  --surface:     #fff8f0;
+  --surface-2:   #ede4d4;
+  --surface-3:   #e0d5c2;
+  --border:      rgba(0,0,0,0.10);
+  --border-hi:   rgba(0,0,0,0.20);
+  --text:        #1a1a1a;
+  --text-muted:  #5a5a5a;
+  --text-dim:    #888880;
+  --accent:      #4455dd;
+  --accent-dim:  rgba(68,85,221,0.15);
+  --accent-hi:   rgba(68,85,221,0.30);
+  --accent-hover:#3344cc;
+  --shadow:      0 4px 24px rgba(0,0,0,0.12);
+  color-scheme: light;
+}
+
+/* Cube face backing and grid lines in light mode — pure black frame */
+body.theme-light .face {
+  background: #000;
+}
+
+/* Hint faces in light mode: slightly visible so they read against light bg */
+body.theme-light .hint-face {
+  background: transparent;
+}
+
+body.theme-light .hint-face .sticker {
+  opacity: 0.25;
+}
+
+body.theme-light .sbtn-face {
+  background: #000;
+}
+
+/* Controls hint body in light mode */
+body.theme-light .ctrl-hint-body {
+  background: rgba(240, 234, 224, 0.92);
+}
+
+/* kbd in light mode */
+body.theme-light kbd {
+  background: rgba(0,0,0,0.05);
+  border-color: rgba(0,0,0,0.15);
+}
+
+/* Date dialog backdrop in light mode */
+body.theme-light .date-dialog::backdrop {
+  background: rgba(200, 190, 170, 0.72);
+}
+
+/* Move colors in light mode: saturated darker shades for readability */
+body.theme-light .mv-W { color: #44444e; }
+body.theme-light .mv-Y { color: #a07800; }
+body.theme-light .mv-G { color: #1a7a3a; }
+body.theme-light .mv-B { color: #1a5fb0; }
+body.theme-light .mv-R { color: #c0303a; }
+body.theme-light .mv-O { color: #c05010; }
+body.theme-light .mv-rot { color: #5a3eaa; }
+
+/* ── Feature 2: Reduced motion ───────────────────────────────── */
+body.reduce-motion * {
+  transition-duration: 0ms !important;
+  animation-duration: 0ms !important;
+}
+
+/* ── Feature 3: Label facelets mode ──────────────────────────── */
+
+/* Real injected <span> labels inside each sticker */
+.sticker-label {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(0,0,0,0.6);
+  pointer-events: none;
+  z-index: 1;
+}
+
+body.color-blind .sticker-label {
+  display: flex;
+}
+
+.sticker-label.dark {
+  color: rgba(255,255,255,0.85);
+}
+
+.sbtn-sticker-label {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.44rem;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(0,0,0,0.6);
+  pointer-events: none;
+  z-index: 1;
+}
+
+body.color-blind .sbtn-sticker-label {
+  display: flex;
+}
+
+.sbtn-sticker-label.dark {
+  color: rgba(255,255,255,0.85);
+}
+
+/* Scale down sticker labels on mobile where cube is 100px */
+@media (max-width: 899px) {
+  .sticker-label { font-size: 0.55rem; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACCESSIBILITY PANEL UI
+   ═══════════════════════════════════════════════════════════════ */
+.a11y-wrap {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+}
+
+.a11y-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border-hi);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.a11y-btn:hover,
+.a11y-btn[aria-expanded="true"] {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.a11y-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 0.85rem 1rem;
+  min-width: 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  z-index: 100;
+}
+
+.a11y-panel[hidden] {
+  display: none !important;
+}
+
+.a11y-panel-title {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.1rem;
+}
+
+.a11y-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.a11y-toggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.a11y-toggle-track {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--surface-3);
+  border: 1px solid var(--border-hi);
+  flex-shrink: 0;
+  transition: background 0.18s, border-color 0.18s;
+}
+
+.a11y-toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: transform 0.18s, background 0.18s;
+}
+
+.a11y-toggle input:checked ~ .a11y-toggle-track {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+}
+
+.a11y-toggle input:checked ~ .a11y-toggle-track::after {
+  transform: translateX(14px);
+  background: var(--accent);
+}
+
+.a11y-toggle-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.a11y-toggle:hover .a11y-toggle-label,
+.a11y-toggle input:checked ~ .a11y-toggle-label {
+  color: var(--text);
+}
+
+/* Mobile adjustments */
+@media (max-width: 899px) {
+  .a11y-wrap {
+    top: 0;
+    transform: none;
+  }
+}
 
 /* ─── Responsive (tablet / small desktop) ────────────────────── */
 @media (max-width: 960px) {

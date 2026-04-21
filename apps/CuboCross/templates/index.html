@@ -83,6 +83,33 @@
       </div>
     </div>
     <div id="error-toast" class="error-toast hidden" role="alert"></div>
+    <!-- Accessibility button + panel -->
+    <div class="a11y-wrap" id="a11y-wrap">
+      <button class="a11y-btn" id="a11y-btn" title="Accessibility options" aria-haspopup="true" aria-expanded="false" aria-controls="a11y-panel">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <circle cx="12" cy="3.5" r="2" fill="currentColor"/>
+          <path d="M19 8H5a1 1 0 0 0 0 2h5.27l-1.68 7.39A1 1 0 0 0 10.56 19l1.44-6.33 1.44 6.33a1 1 0 0 0 .97.61 1 1 0 0 0 .97-1.22L13.73 10H19a1 1 0 0 0 0-2Z" fill="currentColor"/>
+        </svg>
+      </button>
+      <div class="a11y-panel" id="a11y-panel" role="dialog" aria-label="Accessibility options" hidden>
+        <div class="a11y-panel-title">Accessibility</div>
+        <label class="a11y-toggle">
+          <input type="checkbox" id="a11y-light" />
+          <span class="a11y-toggle-track"></span>
+          <span class="a11y-toggle-label">Light mode</span>
+        </label>
+        <label class="a11y-toggle">
+          <input type="checkbox" id="a11y-reduce-motion" />
+          <span class="a11y-toggle-track"></span>
+          <span class="a11y-toggle-label">Reduced motion</span>
+        </label>
+        <label class="a11y-toggle">
+          <input type="checkbox" id="a11y-color-blind" />
+          <span class="a11y-toggle-track"></span>
+          <span class="a11y-toggle-label">Label facelets</span>
+        </label>
+      </div>
+    </div>
   </header>
 
   <!-- ── Main layout: [left+center] | [right] ────────────────────── -->
@@ -328,6 +355,19 @@
    State = one color per face: {f, b, r, l, u, d}.
    ═══════════════════════════════════════════════════════════════ */
 
+/* ─── Color → letter map (for label facelets mode) ───────────── */
+/* Colors must match COLOR_HEX in cube.py exactly */
+const COLOR_FACE_LABEL = {
+  '#ffffff': 'W',
+  '#ffd700': 'Y',
+  '#c62828': 'R',
+  '#ef6c00': 'O',
+  '#2e7d32': 'G',
+  '#1565c0': 'B',
+};
+/* Colors dark enough to need white text on them */
+const COLOR_DARK_TEXT = new Set(['#c62828', '#2e7d32', '#1565c0']);
+
 /* ─── Loading-card helpers (no animation, just status updates) ── */
 const LCARD_KEYS = ['cross','red_blue','red_green','orange_green','orange_blue'];
 
@@ -369,7 +409,18 @@ function sbtnRender(rawFacelets) {
     const stickers = face.querySelectorAll('.sbtn-sticker');
     const indices  = FACE_MAP[fid];
     indices.forEach((idx, i) => {
-      stickers[i].style.background = rawFacelets[idx].bg;
+      const bg = rawFacelets[idx].bg;
+      stickers[i].style.background = bg;
+      /* Remove any existing label span before re-adding */
+      const old = stickers[i].querySelector('.sbtn-sticker-label');
+      if (old) old.remove();
+      const label = COLOR_FACE_LABEL[bg] || '';
+      if (label) {
+        const lbl = document.createElement('span');
+        lbl.className = 'sbtn-sticker-label' + (COLOR_DARK_TEXT.has(bg) ? ' dark' : '');
+        lbl.textContent = label;
+        stickers[i].appendChild(lbl);
+      }
     });
   });
 }
@@ -514,6 +565,85 @@ function transitionToApp() {
     sbtnInit();
   }, 500);
 }
+
+/* ─── Accessibility preferences ─────────────────────────────── */
+const ACCESSIBILITY_KEYS = {
+  lightMode:     'a11y_light',
+  reducedMotion: 'a11y_reduce_motion',
+  colorBlind:    'a11y_color_blind',
+};
+
+function loadAccessibilityPrefs() {
+  if (localStorage.getItem(ACCESSIBILITY_KEYS.lightMode) === '1')
+    document.body.classList.add('theme-light');
+  if (localStorage.getItem(ACCESSIBILITY_KEYS.reducedMotion) === '1')
+    document.body.classList.add('reduce-motion');
+  if (localStorage.getItem(ACCESSIBILITY_KEYS.colorBlind) === '1')
+    document.body.classList.add('color-blind');
+}
+loadAccessibilityPrefs();
+
+/* Sync checkbox states to current body classes */
+function syncA11yCheckboxes() {
+  document.getElementById('a11y-light').checked =
+    document.body.classList.contains('theme-light');
+  document.getElementById('a11y-reduce-motion').checked =
+    document.body.classList.contains('reduce-motion');
+  document.getElementById('a11y-color-blind').checked =
+    document.body.classList.contains('color-blind');
+}
+
+/* ─── Accessibility panel toggle ─────────────────────────────── */
+(function() {
+  const btn   = document.getElementById('a11y-btn');
+  const panel = document.getElementById('a11y-panel');
+
+  function openPanel() {
+    panel.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+    syncA11yCheckboxes();
+  }
+  function closePanel() {
+    panel.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (panel.hidden) openPanel(); else closePanel();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!panel.hidden && !panel.contains(e.target) && e.target !== btn) {
+      closePanel();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !panel.hidden) closePanel();
+  });
+
+  /* Light mode toggle */
+  document.getElementById('a11y-light').addEventListener('change', function() {
+    document.body.classList.toggle('theme-light', this.checked);
+    localStorage.setItem(ACCESSIBILITY_KEYS.lightMode, this.checked ? '1' : '0');
+  });
+
+  /* Reduced motion toggle */
+  document.getElementById('a11y-reduce-motion').addEventListener('change', function() {
+    document.body.classList.toggle('reduce-motion', this.checked);
+    localStorage.setItem(ACCESSIBILITY_KEYS.reducedMotion, this.checked ? '1' : '0');
+  });
+
+  /* Color blind toggle — re-render cube/sbtn to apply/remove labels */
+  document.getElementById('a11y-color-blind').addEventListener('change', function() {
+    document.body.classList.toggle('color-blind', this.checked);
+    localStorage.setItem(ACCESSIBILITY_KEYS.colorBlind, this.checked ? '1' : '0');
+    /* Re-render main cube so data-face attributes are applied */
+    if (allFacelets) renderCube(allFacelets[currentViz]);
+    /* CSS handles sbtn-sticker::after via data-face already set by sbtnRender */
+  });
+})();
 
 /* ─── Controls hint toggle ───────────────────────────────────── */
 (function() {
@@ -694,6 +824,12 @@ function setQuatTransform(q) {
 }
 
 function animateTo(target) {
+  if (document.body.classList.contains('reduce-motion')) {
+    if (animRaf) { cancelAnimationFrame(animRaf); animRaf = null; }
+    renderQuat = target;
+    setQuatTransform(renderQuat);
+    return;
+  }
   if (animRaf) cancelAnimationFrame(animRaf);
   const start    = [...renderQuat];
   const t0       = performance.now();
@@ -831,10 +967,17 @@ function renderCube(facelets) {
     for (const idx of indices) {
       const bg = facelets[idx].bg;
       const isHi = bg !== '#555555';
+      const label = COLOR_FACE_LABEL[bg] || '';
 
       const s = document.createElement('div');
       s.className = 'sticker' + (isHi ? ' hi' : '');
       s.style.background = bg;
+      if (label) {
+        const lbl = document.createElement('span');
+        lbl.className = 'sticker-label' + (COLOR_DARK_TEXT.has(bg) ? ' dark' : '');
+        lbl.textContent = label;
+        s.appendChild(lbl);
+      }
       faceEl.appendChild(s);
 
       if (hintEl) {
