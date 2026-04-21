@@ -1308,8 +1308,8 @@ body.color-blind .sbtn-sticker-label {
 }
 
 .a11y-btn {
-  width: 36px;
-  height: 36px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   border: 1px solid var(--border-hi);
   background: var(--surface-2);
