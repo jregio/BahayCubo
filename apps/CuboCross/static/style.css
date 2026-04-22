@@ -62,6 +62,7 @@ html {
   max-width: 100%;
   /* Native date/time pickers follow this in Chromium & WebKit */
   color-scheme: dark;
+  background: #0d0d12;  /* fill overscroll/bounce areas on mobile */
 }
 
 body {
@@ -72,15 +73,13 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   max-width: 100vw;
+  min-height: 100vh;  /* fill viewport so bg covers ultrawide gutters */
 }
 
-@media (min-width: 900px) {
-  body { min-height: 100vh; }
-}
-
-/* Desktop only: lock to viewport so the history list scrolls in place */
-@media (min-width: 900px) {
-  html, body { height: 100%; }
+/* Always allow page to scroll — no viewport height lock */
+html, body {
+  height: auto;
+  overflow-y: auto;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -184,12 +183,10 @@ body {
   box-sizing: border-box;
 }
 
-/* Desktop: lock to viewport height so the history list scrolls in place */
-@media (min-width: 900px) {
-  .app-wrap {
-    height: 100vh;
-    overflow: hidden;
-  }
+/* App wrap: always natural height */
+.app-wrap {
+  height: auto;
+  overflow: visible;
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -295,8 +292,7 @@ body {
 @media (min-width: 900px) {
   .main-layout {
     grid-template-columns: 1fr 260px;
-    flex: 1;
-    min-height: 0;
+    align-items: stretch;
   }
 }
 
@@ -309,13 +305,7 @@ body {
   width: 100%;
 }
 
-@media (min-width: 900px) {
-  .lc-block {
-    min-height: 0;
-    overflow: hidden;
-    height: 100%;
-  }
-}
+/* lc-block is always auto-height */
 
 /* ─── Top row: left panel + cube ─────────────────────────────── */
 .top-row {
@@ -330,10 +320,9 @@ body {
 @media (min-width: 900px) {
   .top-row {
     grid-template-columns: 260px 1fr;
-    flex-shrink: 1;
-    min-height: 0;
   }
 }
+/* top-row is auto-height */
 
 /* ─── Left panel ─────────────────────────────────────────────── */
 .left-panel {
@@ -349,9 +338,16 @@ body {
 
 .lp-row-btn {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.1rem 1rem;
+  flex-direction: column;
+  align-items: flex-start;   /* left-align header */
+  padding: 0.9rem 1rem 0.8rem;
+  gap: 0.5rem;
+  position: relative;        /* anchor for the absolute-positioned gear */
+}
+
+/* Cube button is centered horizontally, header is still left-aligned */
+.lp-row-btn .scramble-btn {
+  align-self: center;
 }
 
 /* Scramble row: fixed height so it never shifts when text appears.
@@ -378,7 +374,7 @@ body {
 
 .scramble-text {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.95rem;
+  font-size: clamp(0.75rem, 1.5vw, 0.95rem);
   line-height: 1.75;
   word-break: break-word;
   color: var(--text);
@@ -386,7 +382,82 @@ body {
 
 .lp-row-viz { flex-shrink: 0; }
 
-/* ─── Scramble button ────────────────────────────────────────── */
+/* ─── Scramble button area ───────────────────────────────────── */
+/* "Click to scramble" header — same style as .card-label */
+.scramble-btn-header-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0;  /* lp-row-btn handles gap */
+}
+.scramble-btn-header-label kbd {
+  font-size: 0.6rem;
+  padding: 1px 4px;
+  line-height: 1.4;
+  vertical-align: middle;
+}
+
+/* Settings gear — absolutely anchored to top-right of .lp-row-btn */
+.scramble-settings-wrap {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.75rem;
+  z-index: 50;
+}
+
+.scramble-settings-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-hi);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.scramble-settings-btn:hover,
+.scramble-settings-btn[aria-expanded="true"] {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Popup options panel — matches .a11y-panel style exactly */
+.scramble-options-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 0.85rem 1rem;
+  min-width: 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  z-index: 100;
+}
+.scramble-options-popup[hidden] { display: none !important; }
+.sop-title {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.1rem;
+}
+
+
 .scramble-btn {
   background: none;
   border: none;
@@ -446,6 +517,154 @@ body {
 .sbtn-l { transform: rotateY(-90deg) translateZ(30px); }
 .sbtn-u { transform: rotateX( 90deg) translateZ(30px); }
 .sbtn-d { transform: rotateX(-90deg) translateZ(30px); }
+
+/* ─── Scramble options panel internals ───────────────────────── */
+.lp-ctrl-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+/* Segmented control */
+.seg-ctrl {
+  display: flex;
+  background: var(--surface-3);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  gap: 0;
+}
+
+.seg-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--border-hi);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+.seg-btn:last-child { border-right: none; }
+.seg-btn:hover { background: var(--surface-2); color: var(--text); }
+.seg-btn.active {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Cross color dots */
+.color-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.color-dot-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--dot-color, #555);
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.15s, transform 0.12s;
+  flex-shrink: 0;
+}
+.color-dot-btn:hover { transform: scale(1.15); }
+.color-dot-btn.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-dim);
+}
+
+/* Short depth row */
+.lp-short-depth {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.depth-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.depth-slider {
+  flex: 1;
+  accent-color: var(--accent);
+  cursor: pointer;
+  height: 4px;
+}
+
+.depth-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 1.4ch;
+  text-align: right;
+}
+
+.depth-rand-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border-hi);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  width: 34px;
+  height: 34px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  padding: 0;
+}
+.depth-rand-btn:hover {
+  background: var(--surface-3);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Custom scramble input */
+.lp-custom-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.lp-custom-hint {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  margin-left: 4px;
+}
+
+.custom-scramble-field {
+  background: var(--surface-3);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.6rem;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.custom-scramble-field:focus { border-color: var(--accent); }
+.custom-scramble-field::placeholder { color: var(--text-dim); }
 
 /* ─── Viz picker ─────────────────────────────────────────────── */
 .viz-picker {
@@ -512,7 +731,7 @@ body {
 @media (min-width: 900px) {
   .cube-card {
     padding: 2.5rem 1rem 2.5rem 18rem;
-    overflow: hidden;
+    overflow: visible;
   }
 }
 
@@ -720,6 +939,34 @@ kbd {
 .dpad-reset { font-size: 0.95rem; color: var(--accent); border-color: var(--accent-dim); }
 .dpad-reset:hover { border-color: var(--accent); background: var(--accent-dim); color: var(--accent-hover); }
 
+/* ─── Key hints inside active sol box ───────────────────────── */
+.sol-key-hints {
+  display: flex;         /* always in flow so box height never changes */
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  flex-wrap: wrap;
+  visibility: hidden;    /* invisible until box is active */
+  height: 1.3em;         /* fixed height so it never causes reflow */
+  flex-shrink: 0;
+}
+.sol-key-hints kbd {
+  font-size: 0.6rem;
+  padding: 0 3px;
+  line-height: 1.3;
+}
+.sol-enter-hint, .sol-tab-hint {
+  white-space: nowrap;
+}
+.sol-tab-hint.hidden {
+  visibility: hidden;  /* reserve space, don't reflow */
+}
+.sol-box.active .sol-key-hints {
+  visibility: visible;
+}
+
 /* ─── Solution row (5 boxes) ─────────────────────────────────── */
 .sol-row {
   display: grid;
@@ -730,11 +977,9 @@ kbd {
   width: 100%;
 }
 
-@media (min-width: 900px) {
-  .sol-row {
-    flex: 1;        /* grow to fill remaining lc-block height on desktop */
-    min-height: 0;
-  }
+/* sol-row: auto height, never clip */
+.sol-row {
+  min-height: 0;
 }
 
 .sol-box {
@@ -746,10 +991,11 @@ kbd {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;  /* spread icon/label/htm/button evenly */
+  justify-content: space-between;
   gap: 0.5rem;
   transition: border-color 0.18s, box-shadow 0.18s;
   cursor: pointer;
+  position: relative;  /* for dropdown positioning */
 }
 .sol-box:hover { border-color: var(--border-hi); }
 .sol-box.active {
@@ -769,19 +1015,200 @@ kbd {
   color: var(--text-dim);
 }
 
+/* HTM number — fixed height so the box never reflows when the number appears */
+.sol-htm-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: clamp(1.8rem, 3vw, 2.8rem);  /* tracks .sol-htm font-size */
+  flex-shrink: 0;
+}
+
 .sol-htm {
-  font-size: 2.8rem;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
   font-weight: 700;
-  letter-spacing: -2px;
+  letter-spacing: clamp(-1px, -0.5vw, -2px);
   color: var(--text);
   line-height: 1;
 }
+.sol-htm.suboptimal {
+  color: var(--text-muted);
+}
 
-/* Fixed-height reveal area: tall enough for 2 lines, content centered */
+/* Dropdown button — kebab (⋯) icon, top-right corner of active sol-box */
+.sol-dropdown-btn {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  display: none;           /* hidden by default — shown via .sol-box.active below */
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+/* Only show when the box is active (selected) */
+.sol-box.active .sol-dropdown-btn:not([hidden]) { display: flex; }
+.sol-dropdown-btn:hover {
+  background: var(--surface-3);
+  color: var(--text);
+  border-color: var(--accent);
+}
+.sol-dropdown-btn[aria-expanded="true"] {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Dropdown panel — opens upward from the button */
+.sol-dropdown {
+  position: absolute;
+  bottom: calc(100% + 4px);   /* opens upward */
+  right: 0;
+  left: auto;
+  transform: none;
+  min-width: 180px;
+  max-width: min(280px, 90vw);
+  background: var(--surface);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow), 0 8px 32px rgba(0,0,0,0.45);
+  z-index: 200;
+  overflow: visible;  /* allow flyout sub-panels to escape the boundary */
+}
+
+/* Prevent dropdown overflowing viewport on edge boxes */
+.sol-box:first-child .sol-dropdown { right: auto; left: 0; }
+.sol-box:last-child  .sol-dropdown { right: 0;    left: auto; }
+
+/* ── Cascading dropdown ──────────────────────────────────────── */
+
+/* Top-level group row (the 3 HTM tiers) */
+.dd-group-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.42rem 0.65rem;
+  cursor: default;
+  user-select: none;
+  transition: background 0.1s;
+  border-top: 1px solid var(--border);
+}
+.dd-group-row:first-child { border-top: none; }
+.dd-group-row:hover,
+.dd-group-row.open {
+  background: var(--surface-2);
+}
+.dd-group-row--subopt { opacity: 0.75; }
+.dd-group-row--subopt:hover,
+.dd-group-row--subopt.open { opacity: 1; }
+
+/* Empty group — visually muted, no hover/open effect */
+.dd-group-row--empty {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+.dd-group-row--empty .dd-group-row-chevron { visibility: hidden; }
+
+.dd-group-row-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.dd-group-row.open .dd-group-row-label { color: var(--text); }
+
+.dd-group-row-chevron {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: color 0.1s;
+}
+.dd-group-row.open .dd-group-row-chevron { color: var(--accent); }
+
+/* Flyout sub-panel — opens to the right by default */
+.dd-flyout {
+  display: none;
+  position: absolute;
+  left: calc(100% + 4px);    /* right of the parent panel */
+  top: -1px;                 /* align top edge with the group row */
+  min-width: 200px;
+  max-width: min(300px, 90vw);
+  background: var(--surface);
+  border: 1px solid var(--border-hi);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow), 0 8px 32px rgba(0,0,0,0.45);
+  z-index: 201;
+  overflow: hidden;
+  padding: 0.3rem 0;
+}
+.dd-group-row.open > .dd-flyout { display: block; }
+
+/* Flip flyout to the left when .dd-flyout--left is set by JS */
+.dd-flyout.dd-flyout--left {
+  left: auto;
+  right: calc(100% + 4px);
+}
+
+/* Individual solution button inside flyout */
+.dd-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-left: 2px solid transparent;
+  padding: 0.35rem 0.8rem 0.35rem 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.1s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dd-item:hover {
+  background: var(--surface-2);
+  border-left-color: var(--border-hi);
+}
+.dd-item.selected {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+.dd-item--subopt { color: var(--text-muted); }
+.dd-item--subopt:hover,
+.dd-item--subopt.selected { color: inherit; }
+
+/* Empty group placeholder inside flyout */
+.dd-item-empty {
+  padding: 0.38rem 0.8rem;
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--text-muted);
+  opacity: 0.6;
+  user-select: none;
+}
+
+/* Reduce motion: no transition on dropdown reveal */
+body.reduce-motion .sol-dropdown { transition: none; }
+
+/* Reveal area: fixed height when unrevealed, auto when revealed */
 .reveal-btn {
   width: 100%;
-  /* fixed height: roomy enough for 2 lines with breathing room */
-  height: calc(2 * 0.88rem * 1.55 + 2 * 1.1rem);
+  height: 3.8rem;   /* fixed — prevents reflow on enable/disable */
   padding: 0.45rem 0.6rem;
   background: var(--surface-2);
   border: 1.5px solid var(--border-hi);
@@ -808,11 +1235,13 @@ kbd {
 
 .reveal-btn.revealed {
   cursor: default;
+  height: auto;             /* allow to grow when solution text is long */
+  min-height: 3.8rem;
   background: var(--surface-2);
   border-color: var(--border);
   color: var(--text);
   text-align: left;
-  align-items: center;   /* vertically center within the fixed height */
+  align-items: center;
   justify-content: flex-start;
   white-space: normal;
 }
@@ -823,21 +1252,92 @@ kbd {
   line-height: 1.55;
   white-space: normal;
   word-break: break-word;
+  text-align: left;
   animation: fadeIn 0.2s ease;
 }
+
 
 
 /* ─── Right column: History ──────────────────────────────────── */
 .right-col {
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  position: relative;   /* anchor for the absolute pull-tab */
 }
 
 @media (min-width: 900px) {
   .right-col {
-    min-height: 0;
-    overflow: hidden;
+    align-self: start;
+    position: sticky;
+    top: 1rem;
+    overflow: visible;  /* allow pull-tab to hang outside */
   }
+  /* Panel fills the sticky viewport height and scrolls internally */
+  .right-col .history-panel {
+    max-height: calc(100vh - 2rem);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Animate grid column width */
+  .main-layout {
+    transition: grid-template-columns 0.3s ease;
+  }
+  .main-layout:has(.right-col.collapsed) {
+    grid-template-columns: 1fr 0px;
+  }
+}
+
+/* History panel — smooth width collapse */
+.right-col .history-panel {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  max-width: 400px;
+  opacity: 1;
+  transition: max-width 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+}
+.right-col.collapsed .history-panel {
+  max-width: 0;
+  opacity: 0;
+  padding: 0;
+  border-width: 0;
+  pointer-events: none;
+}
+
+/* Pull-tab — absolute on right-col's left edge, vertically centered */
+.history-collapse-btn {
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 14px;
+  height: 48px;
+  padding: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border-hi);
+  border-right: none;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.history-collapse-btn:hover {
+  background: var(--surface-3);
+  color: var(--text);
+  border-color: var(--accent);
+}
+.history-collapse-btn .hcb-icon {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.right-col.collapsed .history-collapse-btn .hcb-icon {
+  transform: rotate(180deg);
 }
 
 .history-panel {
@@ -845,14 +1345,9 @@ kbd {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  flex: 1;
-}
-
-@media (min-width: 900px) {
-  .history-panel {
-    min-height: 0;
-    overflow: hidden;
-  }
+  flex: 1;         /* stretch to fill right-col height */
+  min-height: 0;   /* allow flex children to shrink */
+  overflow: hidden; /* contain the scrollable list */
 }
 
 .history-header {
@@ -1084,14 +1579,16 @@ kbd {
   flex-direction: column;
   gap: 0.55rem;
   padding-right: 3px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-3) transparent;
+  /* On mobile: natural height */
 }
 
 @media (min-width: 900px) {
   .history-list {
-    overflow-y: auto;
-    flex: 1;
-    scrollbar-width: thin;
-    scrollbar-color: var(--surface-3) transparent;
+    flex: 1;          /* fill remaining height in history-panel */
+    min-height: 0;    /* required for flex overflow scrolling */
   }
 }
 
@@ -1431,9 +1928,52 @@ body.color-blind .sbtn-sticker-label {
 @media (max-width: 960px) {
   .loading-cards { flex-wrap: wrap; justify-content: center; }
 }
-/* History fixed height only when the shell itself is fixed-height (desktop) */
+/* Responsive tablet: history panel fills available height */
 @media (min-width: 900px) and (max-width: 960px) {
-  .history-panel { height: 300px; flex: none; }
+  .history-list { max-height: none; }
+}
+
+/* Narrow desktop — keep solution boxes legible at 900–1100px */
+@media (min-width: 900px) and (max-width: 1100px) {
+  .sol-row {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+  }
+  .sol-box {
+    padding: 0.75rem 0.5rem;
+  }
+  .reveal-btn {
+    font-size: 0.72rem;
+    padding: 0.35rem 0.4rem;
+  }
+}
+
+/* Short laptop viewports — tighten spacing, shrink cube */
+@media (max-height: 700px) and (min-width: 900px) {
+  .app-header {
+    padding-bottom: 0.2rem;
+    margin-bottom: 0.2rem;
+  }
+  .cube-card {
+    padding: 1rem;
+  }
+  :root {
+    --cube-size: 150px;
+    --cube-half: 75px;
+  }
+  .face-f { transform: translateZ(75px); }
+  .face-b { transform: rotateY(180deg)  translateZ(75px); }
+  .face-r { transform: rotateY(90deg)   translateZ(75px); }
+  .face-l { transform: rotateY(-90deg)  translateZ(75px); }
+  .face-u { transform: rotateX(90deg)   translateZ(75px); }
+  .face-d { transform: rotateX(-90deg)  translateZ(75px); }
+  .hint-f { transform: scaleX(-1) rotateY(180deg) translateZ(-150px); }
+  .hint-b { transform: scaleX(-1) rotateY(0deg)   translateZ(-150px); }
+  .hint-r { transform: scaleX(-1) rotateY(90deg)  translateZ(-150px); }
+  .hint-l { transform: scaleX(-1) rotateY(-90deg) translateZ(-150px); }
+  .hint-u { transform: scaleY(-1) rotateX(90deg)  translateZ(-150px); }
+  .hint-d { transform: rotateX(-90deg)             translateZ(150px); }
+  .lp-row-scramble { height: 6rem; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1475,57 +2015,32 @@ body.color-blind .sbtn-sticker-label {
     width: 100%;
   }
 
-  /* Row 1: button + scramble text side by side */
-  .lp-row-btn {
+  /* Mobile: simple column stack for left panel */
+  .left-panel {
     display: flex;
-    align-items: center;
-    padding: 0.75rem 0.85rem;
+    flex-direction: column;
+  }
+
+  .lp-row-btn {
+    padding: 0.7rem 0.85rem 0.4rem;
     flex: 0 0 auto;
+    order: 1;
   }
 
   .lp-row-scramble {
+    order: 3;
     display: flex;
     flex-direction: column;
     justify-content: center;
     height: auto;
     min-height: 0;
-    flex: 1;
     padding: 0.75rem 0.85rem;
-    border-left: 1px solid var(--border);
+    border-top: 1px solid var(--border);
   }
 
-
-  /* Use an inner wrapper trick: mark btn+scramble as a sub-row */
-  .left-panel {
-    flex-direction: column;
-  }
-
-  /* Row 1 sub-row: btn and scramble share a horizontal band */
-  .lp-row-btn + .lp-row-scramble {
-    border-top: none;
-  }
-
-  /* Wrap btn and scramble into a flex-row together */
-  .lp-row-btn { order: 1; }
-  .lp-row-scramble { order: 2; }
-  .lp-row-viz { order: 3; }
-
-  /* The trick: make the panel a 2-row grid where row1 = btn+scramble, row2 = viz */
-  .left-panel {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      "btn  scramble"
-      "viz  viz";
-    width: 100%;
-  }
-
-  .lp-row-btn      { grid-area: btn;      padding: 0.75rem 0.85rem; }
-  .lp-row-scramble { grid-area: scramble; padding: 0.75rem 0.85rem; height: auto; min-height: 0; border-left: 1px solid var(--border); }
-  /* Taller viz band: more room for wrapped buttons + pushes cube/controls down the page */
+  /* Taller viz band */
   .lp-row-viz {
-    grid-area: viz;
+    order: 4;
     padding: 1rem 0.85rem 1.15rem;
     border-top: 1px solid var(--border);
     box-sizing: border-box;
@@ -1605,32 +2120,42 @@ body.color-blind .sbtn-sticker-label {
 
   .sol-htm { font-size: 2.2rem; }
 
-  /* ── History panel: natural height, page scrolls ── */
-  .right-col { overflow: visible; }
-  .history-panel {
-    height: auto !important;
-    max-height: none;
-    flex: none;
+  /* ── History panel: natural height on mobile, page scrolls ── */
+  .right-col {
     overflow: visible;
+    position: relative;
+    max-height: none;
   }
+  .right-col .history-panel {
+    max-width: none;
+    max-height: 600px;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.25s ease;
+  }
+  .right-col.collapsed .history-panel {
+    max-width: none;
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* Mobile: pull-tab at the top-center of right-col, horizontal */
+  .history-collapse-btn {
+    position: absolute;
+    left: 50%;
+    top: -14px;
+    transform: translateX(-50%);
+    width: 48px;
+    height: 14px;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    border-bottom: none;
+    border-right: 1px solid var(--border-hi);
+  }
+  .history-collapse-btn .hcb-icon { transform: rotate(-90deg); }
+  .right-col.collapsed .history-collapse-btn .hcb-icon { transform: rotate(90deg); }
   .history-list {
     overflow-y: visible;
     max-height: none;
   }
-
-  /* ── History: collapsible toggle on mobile ── */
-  .history-header { cursor: pointer; user-select: none; }
-  .history-header::after {
-    content: '▾';
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    margin-left: auto;
-    transition: transform 0.2s;
-  }
-  .history-panel.collapsed .history-header::after { transform: rotate(-90deg); }
-  .history-panel.collapsed .history-list,
-  .history-panel.collapsed .date-nav,
-  .history-panel.collapsed .date-picker-input { display: none; }
 
   /* ── Loading screen: wrap cards ── */
   .loading-cards {
@@ -1643,6 +2168,9 @@ body.color-blind .sbtn-sticker-label {
 
   /* ── Scramble text: slightly smaller ── */
   .scramble-text { font-size: 0.85rem; }
+
+  /* Hide keyboard hint in scramble header on mobile */
+  .scramble-btn-header-label kbd { display: none; }
 
   /* ── Reveal button: larger tap target ── */
   .reveal-btn {

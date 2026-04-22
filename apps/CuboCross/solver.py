@@ -55,6 +55,58 @@ from .cube import (
     apply_move, apply_moves, solved_state,
 )
 
+# ── Commute-equivalence canonicalisation ──────────────────────────────────────
+#
+# Two moves commute iff they act on **opposite faces of the same axis**.
+# Standard axis groupings:
+#   L/R   (x-axis)   canonical order: L before R
+#   U/D   (y-axis)   canonical order: D before U
+#   F/B   (z-axis)   canonical order: B before F
+#
+# To canonicalise a sequence: bubble-sort adjacent commuting pairs into the
+# preferred order.  This collapses sequences that differ only in the ordering
+# of non-conflicting opposite-face moves into one representative form.
+
+_AXIS_OF: Dict[str, str] = {
+    'R': 'x', 'L': 'x',
+    'U': 'y', 'D': 'y',
+    'F': 'z', 'B': 'z',
+}
+
+# Within each axis, the "first" face in canonical order
+_AXIS_FIRST: Dict[str, str] = {'x': 'L', 'y': 'D', 'z': 'B'}
+
+
+def _moves_commute(a: str, b: str) -> bool:
+    """True iff moves a and b act on the same axis but different (opposite) faces."""
+    fa, fb = a[0], b[0]
+    if fa == fb:
+        return False  # same face – never commute (and already pruned in search)
+    return _AXIS_OF.get(fa) == _AXIS_OF.get(fb)
+
+
+def _canonical_form(moves: List[str]) -> str:
+    """
+    Return the canonical representative of the commute-equivalence class of
+    the move sequence.  Uses a single bubble-sort pass (repeated until stable).
+    """
+    seq = list(moves)
+    changed = True
+    while changed:
+        changed = False
+        for i in range(len(seq) - 1):
+            a, b = seq[i], seq[i + 1]
+            if not _moves_commute(a, b):
+                continue
+            # Both are on the same axis – put the canonical-first face earlier
+            axis = _AXIS_OF[a[0]]
+            first = _AXIS_FIRST[axis]
+            # If a's face should come *after* b's face, swap
+            if a[0] != first and b[0] == first:
+                seq[i], seq[i + 1] = b, a
+                changed = True
+    return ' '.join(seq)
+
 # ── Constants ────────────────────────────────────────────────────────────────
 
 CROSS_PRUNING_DEPTH: int = 8   # covers all cross states
@@ -255,71 +307,102 @@ def solve(
     table: Dict[int, int],
     depth_limit: int,
     status_cb: Optional[Callable[[str], None]] = None,
-) -> Optional[List[str]]:
+    max_solutions: int = 5,
+    extra_depth: int = 2,
+) -> Optional[List[dict]]:
     """
-    Find the shortest solution for `state` using IDA* with `table` as heuristic.
+    Find up to max_solutions solutions for `state` using IDA*.
 
-    key: table key (determines which encoder to use)
-    table: pruning table from load_or_build_pruning_table
-    depth_limit: maximum search depth
-    status_cb: optional callback for progress messages
+    Searches the optimal HTM first, collects solutions there, then continues
+    at optimal+1 and optimal+2 (up to extra_depth beyond optimal) until
+    max_solutions is reached or depth_limit + extra_depth is hit.
 
-    Returns a list of moves (optimal solution), or None if not found.
+    Returns a list of dicts [{"htm": N, "solution": "R U ..."}] sorted by HTM,
+    or None if no solution found at all.
     """
     encode_fn = _ENCODERS[key]
     pruning_depth = CROSS_PRUNING_DEPTH if key == 'cross' else XCROSS_PRUNING_DEPTH
-    # States not in the table need more than pruning_depth moves → safe lower bound
     fallback_h = pruning_depth + 1
 
     goal_enc = encode_fn(apply_moves(solved_state(), ['x2']))
     start_enc = encode_fn(state)
 
     if start_enc == goal_enc:
-        return []
+        return [{"htm": 0, "solution": "(already solved)"}]
 
-    found: List[List[str]] = []
+    all_found: List[dict] = []
+    seen_canonical: set = set()   # deduplicate by commute-equivalence class
+    optimal_htm: Optional[int] = None
 
     def dfs(
-        state: List[str],
+        cur_state: List[str],
         enc: int,
         g: int,
         bound: int,
         path: List[str],
         last_face: Optional[str],
+        collecting: bool,      # True = gather all sols at this bound
+        needed: int,           # stop when len(all_found) >= needed
     ) -> int:
         h = table.get(enc, fallback_h)
         f = g + h
         if f > bound:
             return f
         if enc == goal_enc:
-            found.append(path[:])
-            return -1  # signal: solution found
+            canon = _canonical_form(path)
+            if canon in seen_canonical:
+                if collecting:
+                    return bound + 1
+                return -1
+            seen_canonical.add(canon)
+            all_found.append({"htm": g, "solution": " ".join(path)})
+            if len(all_found) >= needed:
+                return -1  # enough solutions
+            if collecting:
+                return bound + 1  # keep searching at this depth
+            return -1
 
-        t = bound + 1  # next bound candidate
+        t = bound + 1
         for move in RUFLDB_MOVES:
-            # Prune: no consecutive same-face moves
             if move[0] == last_face:
                 continue
-            ns = apply_move(state, move)
+            ns = apply_move(cur_state, move)
             ne = encode_fn(ns)
             path.append(move)
-            r = dfs(ns, ne, g + 1, bound, path, move[0])
+            r = dfs(ns, ne, g + 1, bound, path, move[0], collecting, needed)
             path.pop()
             if r == -1:
-                return -1  # propagate solution found
+                return -1
             if r < t:
                 t = r
         return t
 
     bound = table.get(start_enc, fallback_h)
-    while bound <= depth_limit:
+    hard_limit = depth_limit + extra_depth
+
+    while bound <= hard_limit and len(all_found) < max_solutions:
         if status_cb:
             status_cb(f"Searching depth {bound}…")
-        r = dfs(state, start_enc, 0, bound, [], None)
-        if r == -1:
-            return found[0]
-        if r > depth_limit:
-            return None
-        bound = r
 
-    return None
+        # On first solve pass: collect up to max_solutions at optimal depth
+        # On extra-depth passes: same collection logic
+        collecting = True
+        prev_count = len(all_found)
+        r = dfs(state, start_enc, 0, bound, [], None, collecting, max_solutions)
+
+        if len(all_found) > prev_count:
+            # Found solutions at this depth
+            if optimal_htm is None:
+                optimal_htm = bound
+            # If we reached max or exhausted this depth, try next depth for more
+            if len(all_found) >= max_solutions:
+                break
+            if optimal_htm is not None and bound >= optimal_htm + extra_depth:
+                break
+        else:
+            if r > hard_limit:
+                break
+
+        bound = bound + 1 if r == -1 else r
+
+    return all_found if all_found else None

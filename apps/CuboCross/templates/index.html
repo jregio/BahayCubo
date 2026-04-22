@@ -126,7 +126,8 @@
 
           <!-- Row 1: Scramble button -->
           <div class="lp-row lp-row-btn">
-            <button class="scramble-btn" id="next-btn" title="New scramble" disabled>
+            <div class="scramble-btn-header-label">Click to scramble <kbd>S</kbd></div>
+            <button class="scramble-btn" id="next-btn" title="New scramble [S]" disabled>
               <div class="sbtn-scene">
                 <div class="sbtn-cube" id="sbtn-cube">
                   <!-- Each face has 9 sticker divs, filled by JS -->
@@ -139,6 +140,70 @@
                 </div>
               </div>
             </button>
+            <!-- Settings gear — top-right of row, floats popup downward -->
+            <div class="scramble-settings-wrap" id="scramble-settings-wrap">
+              <button class="scramble-settings-btn" id="scramble-settings-btn" title="Scramble options" aria-haspopup="true" aria-expanded="false" aria-controls="scramble-options-popup">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="16" height="16" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 0 1-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 0 1 .947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 0 1 2.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 0 1 2.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 0 1 .947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 0 1-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 0 1-2.287-.947zM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+              <!-- Popup options panel -->
+              <div class="scramble-options-popup" id="scramble-options-popup" role="dialog" aria-label="Scramble options" hidden>
+                <div class="sop-title">Scramble options</div>
+                <div class="lp-ctrl-group">
+                  <div class="card-label">Type</div>
+                  <div class="seg-ctrl" id="scramble-type-ctrl" role="group" aria-label="Scramble type">
+                    <button class="seg-btn active" data-type="wca">WCA</button>
+                    <button class="seg-btn" data-type="shortlen">Short</button>
+                    <button class="seg-btn" data-type="short">HTM</button>
+                    <button class="seg-btn" data-type="custom">Custom</button>
+                  </div>
+                </div>
+                <!-- Short scramble length (5-20 WCA moves) — shown when Short is active -->
+                <div class="lp-short-depth hidden" id="shortlen-depth-wrap">
+                  <div class="card-label">Scramble length</div>
+                  <div class="depth-row">
+                    <input type="range" id="shortlen-depth-slider" min="5" max="20" value="12" class="depth-slider" />
+                    <span id="shortlen-depth-val" class="depth-val">12</span>
+                    <button class="depth-rand-btn" id="shortlen-depth-rand" title="Random length">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                        <path d="M2 4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4zm6 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-4 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-4 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <!-- HTM depth selector (1-7, cross-optimal) — shown when HTM is active -->
+                <div class="lp-short-depth hidden" id="short-depth-wrap">
+                  <div class="card-label">Optimal cross depth</div>
+                  <div class="depth-row">
+                    <input type="range" id="short-depth-slider" min="1" max="7" value="5" class="depth-slider" />
+                    <span id="short-depth-val" class="depth-val">5</span>
+                    <button class="depth-rand-btn" id="short-depth-rand" title="Random depth">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                        <path d="M2 4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4zm6 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-4 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-4 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <!-- Custom scramble input — shown right under type when Custom is active -->
+                <div class="lp-custom-input hidden" id="custom-input-wrap">
+                  <div class="card-label">Moves <span class="lp-custom-hint">(R U R' F2…)</span></div>
+                  <input type="text" id="custom-scramble-input" class="custom-scramble-field"
+                    placeholder="e.g. R U R' F2 D" autocomplete="off" spellcheck="false" />
+                </div>
+                <div class="lp-ctrl-group">
+                  <div class="card-label">Cross color</div>
+                  <div class="color-dots" id="cross-color-ctrl" role="group" aria-label="Cross color">
+                    <button class="color-dot-btn active" data-color="white" title="White" style="--dot-color:#ffffff"></button>
+                    <button class="color-dot-btn" data-color="yellow" title="Yellow" style="--dot-color:#ffd700"></button>
+                    <button class="color-dot-btn" data-color="orange" title="Orange" style="--dot-color:#ef6c00"></button>
+                    <button class="color-dot-btn" data-color="red" title="Red" style="--dot-color:#c62828"></button>
+                    <button class="color-dot-btn" data-color="green" title="Green" style="--dot-color:#2e7d32"></button>
+                    <button class="color-dot-btn" data-color="blue" title="Blue" style="--dot-color:#1565c0"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Row 2: Scramble text -->
@@ -235,11 +300,10 @@
           <div class="ctrl-hint" id="ctrl-hint">
             <button class="ctrl-hint-toggle" id="ctrl-hint-toggle" title="Toggle controls help">?</button>
             <div class="ctrl-hint-body" id="ctrl-hint-body">
-              <div class="ctrl-hint-row"><kbd>↑ ↓ ← →</kbd><span>Rotate</span></div>
+              <div class="ctrl-hint-row"><kbd>↑ ↓ ← →</kbd><span>Rotate cube</span></div>
               <div class="ctrl-hint-row"><kbd>E</kbd><kbd>R</kbd><span>Roll ↺ ↻</span></div>
               <div class="ctrl-hint-row"><kbd>Space</kbd><span>Reset view</span></div>
               <div class="ctrl-hint-row"><kbd>Drag</kbd><span>Free rotate</span></div>
-              <div class="ctrl-hint-row"><kbd>Enter</kbd><span>Reveal / hide</span></div>
             </div>
           </div>
 
@@ -251,50 +315,90 @@
       <div class="sol-row" id="sol-row">
 
         <div class="sol-box" id="sol-cross" data-key="cross">
-          <div class="sol-icon"><span class="sol-dot-lg sol-dot-cross-lg"></span></div>
-          <div class="sol-label">Cross</div>
-          <div class="sol-htm" id="htm-cross"></div>
+          <button class="sol-dropdown-btn hidden" id="dd-btn-cross" title="More solutions" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+          <div class="sol-dropdown hidden" id="dd-cross"></div>
+          <div class="sol-icon"><span class="sol-dot-lg sol-dot-cross-lg" id="dot-cross"></span></div>
+          <div class="sol-label" id="label-cross">Cross</div>
+          <div class="sol-htm-wrap">
+            <div class="sol-htm" id="htm-cross"></div>
+          </div>
           <button class="reveal-btn" id="reveal-cross" disabled>Reveal</button>
+          <div class="sol-key-hints" aria-hidden="true">
+            <span class="sol-enter-hint"><kbd>Enter</kbd> reveal/hide</span>
+            <span class="sol-tab-hint hidden"><kbd>Tab</kbd> cycle</span>
+          </div>
         </div>
 
         <div class="sol-box" id="sol-red_blue" data-key="red_blue">
+          <button class="sol-dropdown-btn hidden" id="dd-btn-red_blue" title="More solutions" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+          <div class="sol-dropdown hidden" id="dd-red_blue"></div>
           <div class="sol-icon">
-            <span class="sol-dot-lg" style="background:#1565c0"></span>
-            <span class="sol-dot-lg" style="background:#c62828"></span>
+            <span class="sol-dot-lg" id="dot-red_blue-0" style="background:#1565c0"></span>
+            <span class="sol-dot-lg" id="dot-red_blue-1" style="background:#c62828"></span>
           </div>
-          <div class="sol-label">BR</div>
-          <div class="sol-htm" id="htm-red_blue"></div>
+          <div class="sol-label" id="label-red_blue">BR</div>
+          <div class="sol-htm-wrap">
+            <div class="sol-htm" id="htm-red_blue"></div>
+          </div>
           <button class="reveal-btn" id="reveal-red_blue" disabled>Reveal</button>
+          <div class="sol-key-hints" aria-hidden="true">
+            <span class="sol-enter-hint"><kbd>Enter</kbd> reveal/hide</span>
+            <span class="sol-tab-hint hidden"><kbd>Tab</kbd> cycle</span>
+          </div>
         </div>
 
         <div class="sol-box" id="sol-red_green" data-key="red_green">
+          <button class="sol-dropdown-btn hidden" id="dd-btn-red_green" title="More solutions" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+          <div class="sol-dropdown hidden" id="dd-red_green"></div>
           <div class="sol-icon">
-            <span class="sol-dot-lg" style="background:#c62828"></span>
-            <span class="sol-dot-lg" style="background:#2e7d32"></span>
+            <span class="sol-dot-lg" id="dot-red_green-0" style="background:#c62828"></span>
+            <span class="sol-dot-lg" id="dot-red_green-1" style="background:#2e7d32"></span>
           </div>
-          <div class="sol-label">RG</div>
-          <div class="sol-htm" id="htm-red_green"></div>
+          <div class="sol-label" id="label-red_green">RG</div>
+          <div class="sol-htm-wrap">
+            <div class="sol-htm" id="htm-red_green"></div>
+          </div>
           <button class="reveal-btn" id="reveal-red_green" disabled>Reveal</button>
+          <div class="sol-key-hints" aria-hidden="true">
+            <span class="sol-enter-hint"><kbd>Enter</kbd> reveal/hide</span>
+            <span class="sol-tab-hint hidden"><kbd>Tab</kbd> cycle</span>
+          </div>
         </div>
 
         <div class="sol-box" id="sol-orange_green" data-key="orange_green">
+          <button class="sol-dropdown-btn hidden" id="dd-btn-orange_green" title="More solutions" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+          <div class="sol-dropdown hidden" id="dd-orange_green"></div>
           <div class="sol-icon">
-            <span class="sol-dot-lg" style="background:#2e7d32"></span>
-            <span class="sol-dot-lg" style="background:#ef6c00"></span>
+            <span class="sol-dot-lg" id="dot-orange_green-0" style="background:#2e7d32"></span>
+            <span class="sol-dot-lg" id="dot-orange_green-1" style="background:#ef6c00"></span>
           </div>
-          <div class="sol-label">GO</div>
-          <div class="sol-htm" id="htm-orange_green"></div>
+          <div class="sol-label" id="label-orange_green">GO</div>
+          <div class="sol-htm-wrap">
+            <div class="sol-htm" id="htm-orange_green"></div>
+          </div>
           <button class="reveal-btn" id="reveal-orange_green" disabled>Reveal</button>
+          <div class="sol-key-hints" aria-hidden="true">
+            <span class="sol-enter-hint"><kbd>Enter</kbd> reveal/hide</span>
+            <span class="sol-tab-hint hidden"><kbd>Tab</kbd> cycle</span>
+          </div>
         </div>
 
         <div class="sol-box" id="sol-orange_blue" data-key="orange_blue">
+          <button class="sol-dropdown-btn hidden" id="dd-btn-orange_blue" title="More solutions" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+          <div class="sol-dropdown hidden" id="dd-orange_blue"></div>
           <div class="sol-icon">
-            <span class="sol-dot-lg" style="background:#ef6c00"></span>
-            <span class="sol-dot-lg" style="background:#1565c0"></span>
+            <span class="sol-dot-lg" id="dot-orange_blue-0" style="background:#ef6c00"></span>
+            <span class="sol-dot-lg" id="dot-orange_blue-1" style="background:#1565c0"></span>
           </div>
-          <div class="sol-label">OB</div>
-          <div class="sol-htm" id="htm-orange_blue"></div>
+          <div class="sol-label" id="label-orange_blue">OB</div>
+          <div class="sol-htm-wrap">
+            <div class="sol-htm" id="htm-orange_blue"></div>
+          </div>
           <button class="reveal-btn" id="reveal-orange_blue" disabled>Reveal</button>
+          <div class="sol-key-hints" aria-hidden="true">
+            <span class="sol-enter-hint"><kbd>Enter</kbd> reveal/hide</span>
+            <span class="sol-tab-hint hidden"><kbd>Tab</kbd> cycle</span>
+          </div>
         </div>
 
       </div><!-- .sol-row -->
@@ -302,7 +406,11 @@
     </div><!-- .lc-block -->
 
     <!-- ── Right: History ─────────────────────────────────────────── -->
-    <div class="right-col">
+    <div class="right-col" id="right-col">
+      <!-- Pull-tab: sibling of panel, positioned on right-col's left edge -->
+      <button class="history-collapse-btn" id="history-collapse-btn" title="Toggle history panel" aria-label="Toggle history panel" aria-expanded="true">
+        <svg class="hcb-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
       <div class="history-panel card">
 
         <div class="history-header">
@@ -454,8 +562,8 @@ const FACE_MAP = {
   d: [47,46,45,  50,49,48,  53,52,51],
 };
 
-const MV_SCRAMBLE = { U:'mv-W', D:'mv-Y', F:'mv-G', B:'mv-B', R:'mv-R', L:'mv-O' };
-const MV_SOLUTION = { U:'mv-Y', D:'mv-W', F:'mv-B', B:'mv-G', R:'mv-R', L:'mv-O' };
+let MV_SCRAMBLE = { U:'mv-W', D:'mv-Y', F:'mv-G', B:'mv-B', R:'mv-R', L:'mv-O' };
+let MV_SOLUTION = { U:'mv-Y', D:'mv-W', F:'mv-B', B:'mv-G', R:'mv-R', L:'mv-O' };
 
 /* ── Single source of truth for default cube orientation ── */
 const DEFAULT_ROT = { x: -20, y: -25, z: 0 };
@@ -663,6 +771,76 @@ function syncA11yCheckboxes() {
 /* ─── Scramble button events ─────────────────────────────────── */
 // Wired after DOM ready below
 
+/* ─── F2L pair labels per cross color ────────────────────────── */
+/* Keys: red_blue, orange_blue, red_green, orange_green */
+const F2L_LABELS = {
+  white:  { red_blue: 'BR', orange_blue: 'BO', red_green: 'RG', orange_green: 'GO' },
+  yellow: { red_blue: 'BR', orange_blue: 'BO', red_green: 'RG', orange_green: 'OG' },
+  blue:   { red_blue: 'YR', orange_blue: 'OY', red_green: 'WR', orange_green: 'OW' },
+  red:    { red_blue: 'BY', orange_blue: 'BW', red_green: 'YG', orange_green: 'WG' },
+  green:  { red_blue: 'RY', orange_blue: 'WO', red_green: 'RW', orange_green: 'YO' },
+  orange: { red_blue: 'YR', orange_blue: 'GY', red_green: 'WR', orange_green: 'GW' },
+};
+
+/* Letter → CSS color for sol-dot and move tokens */
+const LETTER_COLOR = {
+  W: '#e8e8f0', Y: '#f5c842', G: '#4ade80',
+  B: '#60a5fa', R: '#f87171', O: '#fb923c',
+};
+const CROSS_DOT_COLOR = {
+  white: '#e8e8f0', yellow: '#f5c842', blue: '#60a5fa',
+  green: '#4ade80', red:    '#f87171', orange: '#fb923c',
+};
+
+/*
+ * Move token color maps per cross color.
+ * The solution moves are played in the pre-rotated frame (cross color on bottom = D).
+ * The scramble moves are in the un-rotated WCA frame (white on top = U).
+ * Face→color after each pre_rotation:
+ *   white  (none): D=W U=Y F=G B=B R=R L=O
+ *   yellow (x2):   D=Y U=W F=B B=G R=R L=O
+ *   blue   (x):    D=B U=G F=W B=Y R=R L=O
+ *   green  (x'):   D=G U=B F=Y B=W R=R L=O
+ *   red    (y):    D=R U=O F=G B=B R=W L=Y
+ *   orange (y'):   D=O U=R F=G B=B R=Y L=W
+ */
+const MV_SOL_MAP = {
+  white:  { U:'mv-Y', D:'mv-W', F:'mv-B', B:'mv-G', R:'mv-R', L:'mv-O' },
+  yellow: { U:'mv-W', D:'mv-Y', F:'mv-G', B:'mv-B', R:'mv-R', L:'mv-O' },
+  blue:   { U:'mv-G', D:'mv-B', F:'mv-W', B:'mv-Y', R:'mv-R', L:'mv-O' },
+  green:  { U:'mv-B', D:'mv-G', F:'mv-Y', B:'mv-W', R:'mv-R', L:'mv-O' },
+  red:    { U:'mv-O', D:'mv-R', F:'mv-G', B:'mv-B', R:'mv-W', L:'mv-Y' },
+  orange: { U:'mv-R', D:'mv-O', F:'mv-G', B:'mv-B', R:'mv-Y', L:'mv-W' },
+};
+/* Scramble moves are always in the un-rotated WCA frame: white on top */
+const MV_SCR_BASE = { U:'mv-W', D:'mv-Y', F:'mv-G', B:'mv-B', R:'mv-R', L:'mv-O' };
+
+function updateVizLabels(color) {
+  const labels = F2L_LABELS[color] || F2L_LABELS.white;
+  const xcrossKeys = ['red_blue', 'orange_blue', 'red_green', 'orange_green'];
+  for (const key of xcrossKeys) {
+    const lbl = labels[key];
+    /* Sol box label */
+    const solLbl = document.getElementById(`label-${key}`);
+    if (solLbl) solLbl.textContent = lbl;
+    /* Viz picker slot label */
+    const vizBtn = document.querySelector(`.viz-btn[data-viz="${key}"] .viz-slot`);
+    if (vizBtn) vizBtn.textContent = lbl;
+  }
+}
+
+/*
+ * Update dot colors and move-token color maps when a session result loads.
+ * `appliedColor` is the cross color that was actually used for the scramble.
+ * These visual changes only take effect here (not when the picker changes).
+ */
+function applySessionColors(appliedColor) {
+  /* Only update move token color maps — dots always keep their sticker colors */
+  const solMap = MV_SOL_MAP[appliedColor] || MV_SOL_MAP.white;
+  Object.assign(MV_SOLUTION, solMap);
+  Object.assign(MV_SCRAMBLE, MV_SCR_BASE);
+}
+
 /* ─── Visualization picker ───────────────────────────────────── */
 function setViz(key) {
   document.querySelectorAll('.viz-btn').forEach(b => b.classList.remove('active'));
@@ -687,6 +865,131 @@ document.querySelectorAll('.sol-box').forEach(box => {
     if (key) setViz(key);
   });
 });
+
+/* ─── Scramble options panel (collapsible) ───────────────────── */
+let scrambleType  = localStorage.getItem('scramble_type') || 'wca';
+let shortDepth    = parseInt(localStorage.getItem('short_depth') || '5', 10);
+let shortLenDepth = parseInt(localStorage.getItem('shortlen_depth') || '12', 10);
+let crossColor    = localStorage.getItem('cross_color') || 'white';
+
+{
+  const popup      = document.getElementById('scramble-options-popup');
+  const settingsBtn = document.getElementById('scramble-settings-btn');
+
+  function setOptionsOpen(open) {
+    if (open) {
+      popup.removeAttribute('hidden');
+    } else {
+      popup.setAttribute('hidden', '');
+    }
+    settingsBtn.setAttribute('aria-expanded', String(open));
+  }
+
+  settingsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setOptionsOpen(popup.hasAttribute('hidden'));
+  });
+
+  /* Close when clicking outside */
+  document.addEventListener('click', (e) => {
+    const wrap = document.getElementById('scramble-settings-wrap');
+    if (wrap && !wrap.contains(e.target)) setOptionsOpen(false);
+  });
+
+  /* Close on Escape */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !popup.hasAttribute('hidden')) {
+      setOptionsOpen(false);
+      settingsBtn.focus();
+    }
+  });
+}
+
+function applyScrambleTypeUI(type) {
+  document.querySelectorAll('.seg-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.type === type);
+  });
+  document.getElementById('shortlen-depth-wrap').classList.toggle('hidden', type !== 'shortlen');
+  document.getElementById('short-depth-wrap').classList.toggle('hidden', type !== 'short');
+  document.getElementById('custom-input-wrap').classList.toggle('hidden', type !== 'custom');
+}
+
+function applyCrossColorUI(color) {
+  document.querySelectorAll('.color-dot-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.color === color);
+  });
+}
+
+document.querySelectorAll('.seg-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    scrambleType = btn.dataset.type;
+    localStorage.setItem('scramble_type', scrambleType);
+    applyScrambleTypeUI(scrambleType);
+  });
+});
+
+document.querySelectorAll('.color-dot-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    crossColor = btn.dataset.color;
+    localStorage.setItem('cross_color', crossColor);
+    applyCrossColorUI(crossColor);
+    updateVizLabels(crossColor);
+  });
+});
+
+/* Short length slider (5-20 plain WCA moves) */
+{
+  const slider  = document.getElementById('shortlen-depth-slider');
+  const valEl   = document.getElementById('shortlen-depth-val');
+  const randBtn = document.getElementById('shortlen-depth-rand');
+  if (slider) {
+    slider.value = shortLenDepth;
+    valEl.textContent = shortLenDepth;
+    slider.addEventListener('input', () => {
+      shortLenDepth = parseInt(slider.value, 10);
+      valEl.textContent = shortLenDepth;
+      localStorage.setItem('shortlen_depth', shortLenDepth);
+    });
+  }
+  if (randBtn) {
+    randBtn.addEventListener('click', () => {
+      shortLenDepth = Math.floor(Math.random() * 16) + 5;  /* 5-20 */
+      if (slider) { slider.value = shortLenDepth; }
+      if (valEl)  { valEl.textContent = shortLenDepth; }
+      localStorage.setItem('shortlen_depth', shortLenDepth);
+    });
+  }
+}
+
+/* HTM depth slider (1-7 cross-optimal) */
+{
+  const slider  = document.getElementById('short-depth-slider');
+  const valEl   = document.getElementById('short-depth-val');
+  const randBtn = document.getElementById('short-depth-rand');
+  if (slider) {
+    slider.value = shortDepth;
+    valEl.textContent = shortDepth;
+    slider.addEventListener('input', () => {
+      shortDepth = parseInt(slider.value, 10);
+      valEl.textContent = shortDepth;
+      localStorage.setItem('short_depth', shortDepth);
+    });
+  }
+  if (randBtn) {
+    randBtn.addEventListener('click', () => {
+      shortDepth = Math.floor(Math.random() * 7) + 1;
+      if (slider) { slider.value = shortDepth; }
+      if (valEl)  { valEl.textContent = shortDepth; }
+      localStorage.setItem('short_depth', shortDepth);
+    });
+  }
+}
+
+/* Init UI from stored prefs */
+applyScrambleTypeUI(scrambleType);
+applyCrossColorUI(crossColor);
+updateVizLabels(crossColor);
+applySessionColors(crossColor);
 
 /* ─── Cube rotation ──────────────────────────────────────────── */
 /* ─── Rotation matrix ────────────────────────────────────────────
@@ -954,6 +1257,14 @@ document.addEventListener('keydown', e => {
       if (btn) toggleReveal(btn);
       break;
     }
+    case 's': case 'S': {
+      if (!nextBtn.disabled) loadSession();
+      break;
+    }
+    case 'Tab': {
+      /* Tab cycling handled by separate listener above — skip here */
+      break;
+    }
   }
 });
 
@@ -1013,33 +1324,298 @@ function clearError() {
   if (errorToast) errorToast.classList.add('hidden');
 }
 
+/* ─── Per-box solution state ─────────────────────────────────── */
+/* boxSolutions[key] = [{htm, solution}, ...] */
+const boxSolutions  = {};
+/* boxOptHtm[key] = the optimal HTM for that key (used to fill empty groups) */
+const boxOptHtm = {};
+/* boxSelectedIdx[key] = currently selected index */
+const boxSelectedIdx = {};
+/* Track which dropdown is open */
+let openDropdownKey = null;
+
 /* ─── Reset / populate solution boxes ───────────────────────── */
 function resetSolBoxes() {
   for (const key of SOL_KEYS) {
-    document.getElementById(`htm-${key}`).textContent = '';
+    boxSolutions[key]   = [];
+    boxOptHtm[key]      = null;
+    boxSelectedIdx[key] = 0;
+    const htmEl  = document.getElementById(`htm-${key}`);
     const revBtn = document.getElementById(`reveal-${key}`);
-    revBtn.disabled = true;
-    revBtn.textContent = 'Reveal';
-    revBtn.classList.remove('revealed');
-    delete revBtn.dataset.solution;
+    const ddBtn  = document.getElementById(`dd-btn-${key}`);
+    const ddEl   = document.getElementById(`dd-${key}`);
+    if (htmEl)  { htmEl.textContent = ''; htmEl.classList.remove('suboptimal'); }
+    if (revBtn) { revBtn.disabled = true; revBtn.textContent = 'Reveal'; revBtn.classList.remove('revealed'); }
+    if (ddBtn)  { ddBtn.classList.add('hidden'); ddBtn.setAttribute('aria-expanded','false'); }
+    if (ddEl)   { ddEl.classList.add('hidden'); ddEl.innerHTML = ''; }
   }
+  closeAllDropdowns();
 }
 
 function populateSolBoxes(results) {
   for (const key of SOL_KEYS) {
     const r = results[key];
-    const htmEl = document.getElementById(`htm-${key}`);
+    const htmEl  = document.getElementById(`htm-${key}`);
     const revBtn = document.getElementById(`reveal-${key}`);
+    const ddBtn  = document.getElementById(`dd-btn-${key}`);
+
     if (!r || r.htm === null) {
       htmEl.textContent = '?';
       revBtn.disabled = true;
-    } else {
-      htmEl.textContent = r.htm;
-      revBtn.disabled = false;
-      revBtn.dataset.solution = r.solution || '';
+      if (ddBtn) ddBtn.classList.add('hidden');
+      boxSolutions[key] = [];
+      boxSelectedIdx[key] = 0;
+      continue;
     }
+
+    /* Support new format [{htm, solution}] and legacy string arrays */
+    let sols;
+    if (Array.isArray(r.solutions) && r.solutions.length && typeof r.solutions[0] === 'object') {
+      sols = r.solutions;
+    } else if (Array.isArray(r.solutions) && r.solutions.length) {
+      /* legacy string array */
+      sols = r.solutions.map(s => ({ htm: r.htm, solution: s }));
+    } else if (r.solution) {
+      sols = [{ htm: r.htm, solution: r.solution }];
+    } else {
+      sols = [{ htm: r.htm, solution: '(already solved)' }];
+    }
+
+    boxSolutions[key]   = sols;
+    boxOptHtm[key]      = r.htm;
+    boxSelectedIdx[key] = 0;
+
+    updateBoxDisplay(key, 0);
+
+    /* Always show dropdown unless already-solved (no alternatives exist) */
+    const isAlreadySolved = sols.length === 1 && sols[0].solution === '(already solved)';
+    if (ddBtn) {
+      if (!isAlreadySolved) {
+        ddBtn.classList.remove('hidden');
+        buildDropdown(key);
+      } else {
+        ddBtn.classList.add('hidden');
+      }
+    }
+
+    /* Show Tab hint if multiple solutions */
+    const tabHint = document.querySelector(`#sol-${key} .sol-tab-hint`);
+    if (tabHint) tabHint.classList.toggle('hidden', sols.length <= 1);
+
+    revBtn.disabled = false;
   }
 }
+
+function updateBoxDisplay(key, idx) {
+  const sols   = boxSolutions[key] || [];
+  if (!sols.length) return;
+  const entry  = sols[idx] || sols[0];
+  const optHtm = sols[0].htm;
+
+  const htmEl  = document.getElementById(`htm-${key}`);
+  const revBtn = document.getElementById(`reveal-${key}`);
+  if (htmEl) {
+    htmEl.textContent = entry.htm;
+    htmEl.classList.toggle('suboptimal', entry.htm > optHtm);
+  }
+  boxSelectedIdx[key] = idx;
+
+  /* If currently revealed, immediately re-reveal the new solution */
+  if (revBtn && revBtn.classList.contains('revealed')) {
+    const sol = entry.solution || '';
+    revBtn.innerHTML = `<span class="sol-moves-inline">${renderMoves(sol, MV_SOLUTION)}</span>`;
+  }
+}
+
+/* ─── Dropdown builder ───────────────────────────────────────── */
+function buildDropdown(key) {
+  const sols   = boxSolutions[key] || [];
+  const ddEl   = document.getElementById(`dd-${key}`);
+  if (!ddEl) return;
+
+  ddEl.innerHTML = '';
+  const optHtm = boxOptHtm[key] ?? (sols[0]?.htm ?? 0);
+  if (optHtm === null) return;
+
+  /* Build a map: htm → [entries] */
+  const groups = {};
+  for (const s of sols) {
+    if (!groups[s.htm]) groups[s.htm] = [];
+    groups[s.htm].push(s);
+  }
+
+  /* Cascading menu: each HTM group is a top-level row with a ▶ flyout */
+  let itemIdx = 0;
+  for (let diff = 0; diff <= 2; diff++) {
+    const htm   = optHtm + diff;
+    const items = groups[htm] || [];
+    const isOpt = diff === 0;
+    const label = isOpt ? `${htm} moves (optimal)` : `${htm} moves (optimal + ${diff})`;
+
+    /* ── Group row (top-level, opens flyout on hover) ── */
+    const isEmpty = items.length === 0;
+    const row = document.createElement('div');
+    row.className = 'dd-group-row' + (diff > 0 ? ' dd-group-row--subopt' : '') + (isEmpty ? ' dd-group-row--empty' : '');
+    row.setAttribute('role', 'menuitem');
+    row.setAttribute('aria-haspopup', 'true');
+    row.setAttribute('aria-expanded', 'false');
+
+    const rowLabel = document.createElement('span');
+    rowLabel.className = 'dd-group-row-label';
+    rowLabel.textContent = label;
+
+    const rowChevron = document.createElement('span');
+    rowChevron.className = 'dd-group-row-chevron';
+    rowChevron.setAttribute('aria-hidden', 'true');
+    rowChevron.textContent = '▶';
+
+    row.appendChild(rowLabel);
+    row.appendChild(rowChevron);
+
+    /* ── Flyout sub-panel ── */
+    const flyout = document.createElement('div');
+    flyout.className = 'dd-flyout' + (diff > 0 ? ' dd-flyout--subopt' : '');
+    flyout.setAttribute('role', 'menu');
+
+    if (items.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'dd-item-empty';
+      empty.textContent = 'No solutions found';
+      flyout.appendChild(empty);
+    } else {
+      for (const entry of items) {
+        const btn = document.createElement('button');
+        btn.className = 'dd-item' + (diff > 0 ? ' dd-item--subopt' : '');
+        btn.type = 'button';
+        btn.setAttribute('role', 'menuitem');
+        btn.title = entry.solution;
+        const solIdx = itemIdx;
+        btn.innerHTML = renderMoves(entry.solution, MV_SOLUTION);
+        if (solIdx === (boxSelectedIdx[key] || 0)) btn.classList.add('selected');
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          selectSolution(key, solIdx);
+          closeAllDropdowns();
+        });
+        flyout.appendChild(btn);
+        itemIdx++;
+      }
+    }
+
+    row.appendChild(flyout);
+    ddEl.appendChild(row);
+
+    /* Open flyout on hover */
+    row.addEventListener('mouseenter', () => {
+      /* Close all other flyouts in this dropdown first */
+      ddEl.querySelectorAll('.dd-group-row').forEach(r => {
+        if (r !== row) {
+          r.classList.remove('open');
+          r.setAttribute('aria-expanded', 'false');
+        }
+      });
+      row.classList.add('open');
+      row.setAttribute('aria-expanded', 'true');
+      /* Flip to left if flyout overflows viewport right edge */
+      requestAnimationFrame(() => {
+        const rect = flyout.getBoundingClientRect();
+        if (rect.right > window.innerWidth - 8) {
+          flyout.classList.add('dd-flyout--left');
+        } else {
+          flyout.classList.remove('dd-flyout--left');
+        }
+      });
+    });
+  }
+}
+
+function refreshDropdownSelection(key) {
+  const ddEl = document.getElementById(`dd-${key}`);
+  if (!ddEl) return;
+  const idx = boxSelectedIdx[key] || 0;
+  /* Items are now inside flyouts; still flat-indexed in DOM order */
+  ddEl.querySelectorAll('.dd-item').forEach((btn, i) => {
+    btn.classList.toggle('selected', i === idx);
+  });
+}
+
+function selectSolution(key, idx) {
+  updateBoxDisplay(key, idx);
+  refreshDropdownSelection(key);
+}
+
+/* ─── Dropdown open/close ────────────────────────────────────── */
+function closeAllDropdowns() {
+  for (const key of SOL_KEYS) {
+    const ddEl  = document.getElementById(`dd-${key}`);
+    const ddBtn = document.getElementById(`dd-btn-${key}`);
+    if (ddEl)  ddEl.classList.add('hidden');
+    if (ddBtn) ddBtn.setAttribute('aria-expanded', 'false');
+  }
+  openDropdownKey = null;
+}
+
+function toggleDropdown(key) {
+  const ddEl  = document.getElementById(`dd-${key}`);
+  const ddBtn = document.getElementById(`dd-btn-${key}`);
+  if (!ddEl) return;
+
+  const isOpen = !ddEl.classList.contains('hidden');
+  closeAllDropdowns();
+  if (!isOpen) {
+    ddEl.classList.remove('hidden');
+    if (ddBtn) ddBtn.setAttribute('aria-expanded', 'true');
+    openDropdownKey = key;
+    /* Flip downward if would overflow top of viewport */
+    requestAnimationFrame(() => {
+      const rect = ddEl.getBoundingClientRect();
+      if (rect.top < 8) {
+        ddEl.style.bottom = 'auto';
+        ddEl.style.top = 'calc(100% + 4px)';
+      } else {
+        ddEl.style.top = '';
+        ddEl.style.bottom = '';
+      }
+    });
+  }
+}
+
+/* Wire dropdown buttons */
+for (const key of SOL_KEYS) {
+  const ddBtn = document.getElementById(`dd-btn-${key}`);
+  if (ddBtn) {
+    ddBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleDropdown(key);
+    });
+  }
+}
+
+/* Close dropdowns on outside click */
+document.addEventListener('click', () => closeAllDropdowns());
+
+/* Close on Escape */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && openDropdownKey) { closeAllDropdowns(); e.preventDefault(); }
+});
+
+/* Tab/Shift+Tab to cycle solutions within the active box */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key !== 'Tab') return;
+  const sols = boxSolutions[currentViz] || [];
+  if (sols.length <= 1) return;
+  /* Always consume Tab when there are multiple solutions — never let it escape to page focus */
+  e.preventDefault();
+  /* Don't cycle if the solution is still hidden */
+  const revBtn = document.getElementById(`reveal-${currentViz}`);
+  if (!revBtn || !revBtn.classList.contains('revealed')) return;
+  const cur = boxSelectedIdx[currentViz] || 0;
+  const next = e.shiftKey
+    ? (cur - 1 + sols.length) % sols.length
+    : (cur + 1) % sols.length;
+  selectSolution(currentViz, next);
+});
 
 /* ─── Reveal buttons (toggleable) ───────────────────────────── */
 function toggleReveal(btn) {
@@ -1047,20 +1623,28 @@ function toggleReveal(btn) {
   if (btn.classList.contains('revealed')) {
     btn.classList.remove('revealed');
     btn.textContent = 'Reveal';
-  } else {
-    const sol = btn.dataset.solution || '';
-    btn.classList.add('revealed');
-    btn.innerHTML =
-      `<span class="sol-moves-inline">${renderMoves(sol, MV_SOLUTION)}</span>`;
+    return;
   }
+  /* Get selected solution for this box */
+  const key = btn.closest('.sol-box')?.dataset.key;
+  const sols = boxSolutions[key] || [];
+  const idx  = boxSelectedIdx[key] || 0;
+  const entry = sols[idx] || {};
+  const sol = entry.solution || '';
+  btn.classList.add('revealed');
+  btn.innerHTML = `<span class="sol-moves-inline">${renderMoves(sol, MV_SOLUTION)}</span>`;
 }
 
 document.querySelectorAll('.reveal-btn').forEach(btn => {
-  btn.addEventListener('click', () => toggleReveal(btn));
+  btn.addEventListener('click', (e) => { e.stopPropagation(); toggleReveal(btn); });
 });
 
 /* ─── Display a history entry ────────────────────────────────── */
 async function displayEntry(entry) {
+  /* Restore colors for the cross color used when this entry was saved */
+  const entryCrossColor = entry.cross_color || 'white';
+  applySessionColors(entryCrossColor);
+  updateVizLabels(entryCrossColor);
   scrambleEl.innerHTML = renderMoves(entry.scramble, MV_SCRAMBLE);
   allFacelets = entry.all_facelets || null;
   if (allFacelets) renderCube(allFacelets[currentViz]);
@@ -1098,12 +1682,21 @@ async function loadSession() {
   setSbtnSolving(true);
   resetRot();
 
+  const customInput = document.getElementById('custom-scramble-input');
+  const payload = {
+    scramble_type:    scrambleType,
+    short_depth:      shortDepth,
+    shortlen_depth:   shortLenDepth,
+    custom_scramble:  customInput ? customInput.value.trim() : '',
+    cross_color:      crossColor,
+  };
+
   let res;
   try {
     res = await fetch('/cubocross/api/session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({}),
+      body: JSON.stringify(payload),
     });
   } catch (e) {
     showError('Network error — is the server running?');
@@ -1117,11 +1710,14 @@ async function loadSession() {
   let buffer = '';
 
   function applySessionResult(msg) {
+    /* Apply colors for the cross color that was actually solved */
+    applySessionColors(msg.cross_color || crossColor);
+    updateVizLabels(msg.cross_color || crossColor);
     scrambleEl.innerHTML = renderMoves(msg.scramble_display, MV_SCRAMBLE);
     allFacelets = msg.all_facelets;
     renderCube(allFacelets[currentViz]);
     populateSolBoxes(msg.results);
-    const ts = saveToHistory(msg.scramble_display, msg.results, msg.all_facelets, msg.raw_facelets);
+    const ts = saveToHistory(msg.scramble_display, msg.results, msg.all_facelets, msg.raw_facelets, msg.cross_color || crossColor);
     setSelectedEntry(ts);
     sbtnRandomize(msg.raw_facelets);
     nextBtn.disabled = false;
@@ -1185,10 +1781,10 @@ function saveHistory(h) { localStorage.setItem('crosstrainer_history', JSON.stri
 
 let viewDate = todayStr();
 
-function saveToHistory(scramble, results, all_facelets, raw_facelets) {
+function saveToHistory(scramble, results, all_facelets, raw_facelets, cross_color_used) {
   const h = loadHistory();
   const ts = Date.now();
-  h.unshift({ ts, date: todayStr(), scramble, results, all_facelets, raw_facelets });
+  h.unshift({ ts, date: todayStr(), scramble, results, all_facelets, raw_facelets, cross_color: cross_color_used });
   saveHistory(h);
   if (viewDate === todayStr()) renderHistory(viewDate);
   return ts;
@@ -1480,30 +2076,25 @@ datePicker.addEventListener('change', () => {
   }
 });
 
-/* ─── Mobile: collapsible history panel ─────────────────────── */
+/* ─── Collapsible history panel (desktop + mobile) ────────── */
 (function() {
-  const panel  = document.querySelector('.history-panel');
-  const header = document.querySelector('.history-header');
-  if (!panel || !header) return;
-  const STORE_KEY = 'historyCollapsed';
+  const col = document.getElementById('right-col');
+  const btn = document.getElementById('history-collapse-btn');
+  if (!col || !btn) return;
+  const STORE_KEY = 'historyCollapsed2';
 
-  function isMobile() { return window.innerWidth <= 899; }
-
-  function applyCollapse() {
-    if (!isMobile()) { panel.classList.remove('collapsed'); return; }
-    if (localStorage.getItem(STORE_KEY) === '1') panel.classList.add('collapsed');
+  function setCollapsed(collapsed) {
+    col.classList.toggle('collapsed', collapsed);
+    btn.setAttribute('aria-expanded', String(!collapsed));
+    localStorage.setItem(STORE_KEY, collapsed ? '1' : '0');
   }
 
-  header.addEventListener('click', (e) => {
-    if (!isMobile()) return;
-    /* Date controls live inside the header row — don’t treat those taps as collapse */
-    if (e.target.closest('.date-nav')) return;
-    const collapsed = panel.classList.toggle('collapsed');
-    localStorage.setItem(STORE_KEY, collapsed ? '1' : '0');
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setCollapsed(!col.classList.contains('collapsed'));
   });
 
-  applyCollapse();
-  window.addEventListener('resize', applyCollapse);
+  if (localStorage.getItem(STORE_KEY) === '1') setCollapsed(true);
 })();
 
 /* ─── Init ───────────────────────────────────────────────────── */
